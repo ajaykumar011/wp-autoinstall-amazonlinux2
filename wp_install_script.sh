@@ -12,7 +12,7 @@ fi
 echo "**********************************************"
 echo "Welcome to Automated installation of Wordpress"
 echo "**********************************************"
-read -p "Enter your root password of DB: " MYSQL_PASS
+read -p "Enter your root password of DB: " -s MYSQL_PASS
 echo "Thanks.. We don't need other inputs.."
 echo "Date and Time:" $(date +%F_%R)
 echo "Sever Uptime is:" && uptime
