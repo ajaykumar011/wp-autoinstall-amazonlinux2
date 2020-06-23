@@ -16,7 +16,6 @@ runcmd:
  - sudo systemctl enable httpd
  - [ sh, -c, 'git clone https://github.com/ajaykumar011/cloudformation_files.git /var/www/html/' ]
  - rm -rf /tmp/web-tmp
- - mkdir -p /tmp/web-tmp
  - [ sh, -c, 'git clone https://github.com/ajaykumar011/wp-autoinstall-amazonlinux2.git /tmp/web-tmp/' ] 
  - [ sh, -c, "usermod -a -G apache ec2-user" ]
  - [ sh, -c, "chown -R ec2-user:apache /var/www" ]

@@ -23,12 +23,16 @@ else
 fi
 echo "Date and Time:" $(date +%F_%R)
 echo "Sever Uptime is:" && uptime
+sleep 2
+clear
 echo "Amazon Linux Information section"
 echo "----------------------------------------------"
 cat /etc/system-release
-echo "----------------------------------------------"
+echo ""
 curl http://169.254.169.254/latest/meta-data/public-hostname
+echo ""
 curl http://169.254.169.254/latest/meta-data/public-ipv4
+echo ""
 curl http://169.254.169.254/latest/meta-data/ami-id
 echo "----------------------------------------------"
 
@@ -43,12 +47,12 @@ read -t 3 -n 1 -s -r -p "Press any key to continue"
 echo " "
 echo "This Script install Wordpress automatically by creating a new database."
 echo "This script assumes that Mysql 5.6 db on Amazon Linux2."
-echo "Your MySQL Version:"
+echo ""
 mysql_ver="$(mysql --version|awk '{ print $5 }'|awk -F\, '{ print $1 }')"
 echo "MySQL Version is : $mysql_ver"
 echo  "------------------------------------------------"
 
-if [[ `ps -acx|grep apache|wc -l` > 0 ]]; then
+if [[ `ps -acx|grep httpd|wc -l` > 0 ]]; then
     echo "Server Configured with Apache"
     httpd -v && echo "Apache OK" || exit 1
     echo "Suggested Server Name:"
@@ -56,6 +60,8 @@ if [[ `ps -acx|grep apache|wc -l` > 0 ]]; then
     echo "Suggested Webroot is below: "
     grep 'DocumentRoot' /etc/httpd/conf/httpd.conf
     read -e -p "Enter Your Webroot if not default :" -i "/var/www/html" webroot
+    echo "Webroot Selected is: $webroot"
+    sleep 3
     web_service=httpd
     systemctl is-active --quiet $web_service && echo "Apache is running" || echo "Apache is NOT running"
 fi
@@ -67,6 +73,8 @@ if [[ `ps -acx|grep nginx|wc -l` > 0 ]]; then
     echo "Suggested Webroot is below: "
     grep 'root' /etc/nginx/nginx.conf
     read -e -p "Enter Your Webroot if not default :" -i "/usr/share/nginx/html" webroot
+    echo "Webroot Selected is: $webroot"
+    sleep 3
     web_service=nginx
     systemctl is-active --quiet $web_service && echo "Nginx is running" || echo "Nginx is NOT running"
 fi
@@ -93,7 +101,7 @@ chkconfig --list
 echo "Port Information"
 echo "==================================================="
 netstat -tulnp | grep $web_service
-$SHELL –version  
+$SHELL –version 
 sleep 1
 echo "---------------------------------------------------"
 echo "MySQL Information..."
@@ -191,7 +199,7 @@ fi
 sleep 1
 
 echo "<?php phpinfo();?>" > $webroot/info.php
-echo "We are implementing the permission webroot folder"
+echo "We are implementing the permission webroot folder: $webroot"
 webroot_dir=$(dirname $webroot)
 
 sudo chown -R $webroot_user:$webroot_group $webroot_dir
