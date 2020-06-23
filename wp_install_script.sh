@@ -14,6 +14,13 @@ echo "Welcome to Automated installation of Wordpress"
 echo "**********************************************"
 read -p "Enter your root password of DB: " -s MYSQL_PASS
 echo "Thanks.. We don't need other inputs.."
+mysql -u root -p$MYSQL_PASS -e"exit"
+if [ $? -eq 0 ]; then
+    echo "Mysql-root password is correct... Logging in.."
+else
+    echo "Please check your msyql-root credentials"
+    exit 1
+fi
 echo "Date and Time:" $(date +%F_%R)
 echo "Sever Uptime is:" && uptime
 echo "Amazon Linux Information section"
@@ -73,13 +80,6 @@ php -v
 read -t 5 -n 1 -s -r -p "Press any key to continue"
 echo "Database Version Information "
 mysql -V
-mysql -u root -p$MYSQL_PASS -e"exit"
-if [ $? -eq 0 ]; then
-    echo "Mysql-root password is correct... Logging in.."
-else
-    echo "Please check your msyql-root credentials"
-    exit 1
-fi
 sleep 1
 echo "Going to Install some necessary tools"
 sleep 2
