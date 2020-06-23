@@ -2,6 +2,11 @@
 now=$(date +"%m_%d_%Y")
 FILE=awsinfo.php
 DIR=.git
+if [ $USER != "root" ]; then
+        echo "Script must be run as user sudo or root "
+        exit 1
+fi
+
 if [ ! -f $FILE ]; then
    echo "Your are not in correct directory. File check failed." 
    exit 1
@@ -13,17 +18,17 @@ fi
 echo "**********************************************"
 echo "Welcome to Automated SSL on Apache"
 echo "**********************************************"
-read -e -p "Enter Your Webroot if not default :" -i "/var/www/html" webroot
+echo "This Script works only with default installation location of Apache"
+read -t 5 -n 1 -s -r -p "Press any key to continue"
+webroot =/var/www/html
+echo "Webroot is : $webroot"
 if [[ $webroot != "/var/www/html" ]]; then
 	echo "This script only work with default config of Apache"
 	exit 1
 fi	
-if [ $USER != "root" ]; then
-        echo "Script must be run as user sudo or root "
-        exit 1
-fi
-systemctl is-active --quiet httpd && echo "Apache is running" || echo "Apache is NOT running"
 
+systemctl is-active --quiet httpd && echo "Apache is running" || echo "Apache is NOT running"
+sudo yum -q -y install mod_ssl
 echo "Genrating custom.key private key file"
 openssl genrsa -out custom.key 4096
 #sudo openssl req -new -key custom.key -out csr.pem
@@ -57,11 +62,12 @@ sudo mkdir -p /etc/httpd/conf.d/
 \cp ssl.conf /etc/httpd/conf.d/
 
 httpd -t 
+httpd -t  && echo "Apache Configuration is Okay" || echo "Some Problem in Apache config"
 if [ $? -eq 0 ]; then
-    echo "Something happend Wrong."
+    echo "SSL Seems to be implemented. "
 else
-    echo "SSL seems to be implemented..]"
-     exit 1
+    echo "Some Problem in configuraiton"
+    exit 1
 fi
 service httpd restart
 
