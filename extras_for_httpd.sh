@@ -1,5 +1,15 @@
 #!/bin/bash
 now=$(date +"%m_%d_%Y")
+FILE=webinfo.php
+DIR=.git
+if [ ! -f $FILE ]; then
+   echo "Your are not in correct directory. File check failed." 
+   exit 1
+fi
+if [ ! -d $DIR ]; then
+	echo "Your are not in correct directory. Directory check failed."
+	exit 1
+fi
 echo "**********************************************"
 echo "Welcome to Automated SSL on Apache"
 echo "**********************************************"
