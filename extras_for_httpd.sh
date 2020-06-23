@@ -26,9 +26,8 @@ if [[ $webroot != "/var/www/html" ]]; then
 	echo "This script only work with default config of Apache"
 	exit 1
 fi	
-
+yum install mod_ssl -y
 systemctl is-active --quiet httpd && echo "Apache is running" || echo "Apache is NOT running"
-sudo yum -q -y install mod_ssl
 echo "Genrating custom.key private key file"
 openssl genrsa -out custom.key 4096
 #sudo openssl req -new -key custom.key -out csr.pem
@@ -61,14 +60,8 @@ echo "Copying ssl.conf file to /etc/httpd/conf.d directory"
 sudo mkdir -p /etc/httpd/conf.d/
 \cp ssl.conf /etc/httpd/conf.d/
 
-httpd -t 
+
 httpd -t  && echo "Apache Configuration is Okay" || echo "Some Problem in Apache config"
-if [ $? -eq 0 ]; then
-    echo "SSL Seems to be implemented. "
-else
-    echo "Some Problem in configuraiton"
-    exit 1
-fi
 service httpd restart
 
 echo "******************************************************"
