@@ -1,0 +1,28 @@
+#cloud-config
+repo_update: true
+repo_upgrade: all
+
+timezone: "Asia/Kolkata"
+
+packages:
+ - wget
+ - mariadb-server
+ - git
+
+runcmd:
+ - [ sh, -c, "amazon-linux-extras install -y lamp-mariadb10.2-php7.2 php7.2 nginx1" ]
+ - sudo systemctl start nginx
+ - sudo systemctl enable nginx
+ - [ sh, -c, 'rm -rf /usr/share/nginx/html/*' ]
+ - [ sh, -c, 'git clone https://github.com/ajaykumar011/cloudformation_files.git /usr/share/nginx/html/' ]
+ - [ sh, -c, 'echo "<?php phpinfo(); ?>" > /usr/share/nginx/html/info.php' ]
+ - [ sh, -c, "usermod -a -G apache ec2-user" ]
+ - [ sh, -c, "chown -R ec2-user:apache /usr/share/nginx" ]
+ - [ sh, -c, "chown -R apache:apache /var/log/nginx" ]
+ - [ sh, -c, "chown -R apache:apache /var/log/php-fpm" ]
+ - [ sh, -c, "chown -R apache:apache /var/lib/php/sessions" ] 
+ - [ sh, -c, "sed -i 's/user nginx/user apache/g' /etc/nginx/nginx.conf" ]
+ - sudo chmod 2775 /usr/share/nginx
+ - sudo systemctl start php-fpm
+ - sudo systemctl enable php-fpm
+ - sudo systemctl restart nginx
