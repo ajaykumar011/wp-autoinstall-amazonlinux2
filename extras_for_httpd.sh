@@ -20,7 +20,7 @@ echo "Welcome to Automated SSL on Apache"
 echo "**********************************************"
 echo "This Script works only with default installation location of Apache"
 #read -t 5 -n 1 -s -r -p "Press any key to continue"
-webroot =/var/www/html
+webroot=/var/www/html
 echo "Webroot is : $webroot"
 if [[ $webroot != "/var/www/html" ]]; then
 	echo "This script only work with default config of Apache"
