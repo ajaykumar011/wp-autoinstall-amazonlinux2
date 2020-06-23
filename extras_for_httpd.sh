@@ -43,7 +43,7 @@ chmod 644 /etc/pki/tls/private/custom.key
 ls -al /etc/pki/tls/private/custom.key
 
 echo "Transferring httpd.conf and gzip.conf from git "
-mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf_$now.bk
+\mv /etc/httpd/conf.d/vhost.conf /etc/httpd/conf.d/vhost_$now.bk
 
 \cp vhosts.conf /etc/httpd/conf.d/
 #\cp gzip.conf /etc/httpd/conf/
