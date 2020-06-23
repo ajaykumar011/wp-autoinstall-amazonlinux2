@@ -3,7 +3,7 @@ echo "**********************************************"
 echo "Welcome to Automated SSL on Nginx"
 echo "**********************************************"
 read -e -p "Enter Your Webroot if not default :" -i "/usr/share/nginx/html" webroot
-if [[ $webroot != "/usr/share/nginx/html" ]]
+if [[ $webroot != "/usr/share/nginx/html" ]]; then
 	echo "This script only work with default config of nginx"
 	exit 1
 fi	

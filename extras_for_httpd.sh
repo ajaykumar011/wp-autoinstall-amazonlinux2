@@ -1,11 +1,11 @@
 #!/bin/bash
 now=$(date +"%m_%d_%Y")
 echo "**********************************************"
-echo "Welcome to Automated SSL on Nginx"
+echo "Welcome to Automated SSL on Apache"
 echo "**********************************************"
 read -e -p "Enter Your Webroot if not default :" -i "/var/www/html" webroot
-if [[ $webroot != "/var/www/html" ]]
-	echo "This script only work with default config of nginx"
+if [[ $webroot != "/var/www/html" ]]; then
+	echo "This script only work with default config of Apache"
 	exit 1
 fi	
 if [ $USER != "root" ]; then
@@ -32,29 +32,28 @@ chown root:root /etc/pki/tls/private/custom.key
 chmod 644 /etc/pki/tls/private/custom.key
 ls -al /etc/pki/tls/private/custom.key
 
-echo "Transferring nginx.conf and gzip.conf from git "
+echo "Transferring httpd.conf and gzip.conf from git "
 mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf_$now.bk
 
 \cp vhosts.conf /etc/httpd/conf.d/
 #\cp gzip.conf /etc/httpd/conf/
-#chomod –R 775 /var/log/nginx 
 
 echo "creating dhparams.pem file"
 sleep 2
 sudo openssl dhparam -out /etc/pki/tls/certs/dhparams.pem 2048
 
-echo "Copying ssl.conf file to /etc/nginx/snippets directory"
+echo "Copying ssl.conf file to /etc/httpd/conf.d directory"
 sudo mkdir -p /etc/httpd/conf.d/
-\cp ssl.conf /etc/nginx/conf.d/
+\cp ssl.conf /etc/httpd/conf.d/
 
-nginx -t 
+httpd -t 
 if [ $? -eq 0 ]; then
     echo "Something happend Wrong."
 else
     echo "SSL seems to be implemented..]"
      exit 1
 fi
-service nginx restart
+service httpd restart
 
 echo "******************************************************"
 echo Certificate Information
