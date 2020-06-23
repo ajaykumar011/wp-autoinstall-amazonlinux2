@@ -3,6 +3,8 @@ repo_update: true
 repo_update: true
 repo_upgrade: all
 
+timezone: "Asia/Kolkata"
+
 packages:
  - httpd
  - mariadb-server
@@ -13,6 +15,7 @@ runcmd:
  - systemctl start httpd
  - sudo systemctl enable httpd
  - [ sh, -c, 'git clone https://github.com/ajaykumar011/cloudformation_files.git /var/www/html/' ]
+ - [ sh, -c, 'git clone https://github.com/ajaykumar011/wp-autoinstall-amazonlinux2.git /var/www/' ] 
  - [ sh, -c, "usermod -a -G apache ec2-user" ]
  - [ sh, -c, "chown -R ec2-user:apache /var/www" ]
  - chmod 2775 /var/www

@@ -15,6 +15,7 @@ runcmd:
  - sudo systemctl enable nginx
  - [ sh, -c, 'rm -rf /usr/share/nginx/html/*' ]
  - [ sh, -c, 'git clone https://github.com/ajaykumar011/cloudformation_files.git /usr/share/nginx/html/' ]
+ - [ sh, -c, 'git clone https://github.com/ajaykumar011/wp-autoinstall-amazonlinux2.git /var/www/' ] 
  - [ sh, -c, 'echo "<?php phpinfo(); ?>" > /usr/share/nginx/html/info.php' ]
  - [ sh, -c, "usermod -a -G apache ec2-user" ]
  - [ sh, -c, "chown -R ec2-user:apache /usr/share/nginx" ]
