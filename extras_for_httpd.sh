@@ -1,6 +1,6 @@
 #!/bin/bash
 now=$(date +"%m_%d_%Y")
-FILE=webinfo.php
+FILE=awsinfo.php
 DIR=.git
 if [ ! -f $FILE ]; then
    echo "Your are not in correct directory. File check failed." 
