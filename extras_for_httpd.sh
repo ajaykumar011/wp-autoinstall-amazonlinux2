@@ -110,7 +110,7 @@ echo ""
 if [[ -f '/etc/httpd/conf.d/ssl.conf' ]]; then
     mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl_$now.bk && echo "ssl.conf renamed " || echo "ssl.conf Rename failed"
 fi
-\cp ssl.conf /etc/httpd/conf.d/ && echo "ssl.conf copied " || echo "ssl.conf copy failed"
+
 
 
 echo "Creating dhparams.pem file, This will take some time."
