@@ -232,3 +232,16 @@ echo "=========================================================="
 echo "Installation is finished. "
 echo "=========================================================="
 echo "$(tput setaf 7)$(tput setab 6)---|-WP READY TO ROCK-|---$(tput sgr 0)"
+read -e -p "Do you want to implement SSL with the site [y/n]: " -i "y" yn
+if [[ yn == 'y' ]]; then
+    if [ $webroot == "httpd" ]; then
+        echo "You are running apache: "
+        sudo sh extras_for_httpd.sh
+    fi
+    elif [ $webroot == "httpd" ]; then
+        echo "You are running Nginx: "
+        sudo sh extras_for_nginx.sh
+    fi
+    else
+        echo "Thank you.."
+fi

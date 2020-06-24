@@ -75,34 +75,38 @@ fi
 #sudo openssl req -new -key custom.key -out csr.pem
 echo "Transferring certificate.crt from git and custom.key from local to cert directory"
 sleep 2
-
+echo "Checking the availability of certificate files............"
+echo "------------------------------------------------------------"
 [[ -f ./cert_httpd/certificate.crt ]] && echo "Certificate is present" || echo "Certificate file missing or renamed"
 [[ -f ./cert_httpd/ca_bundle.crt ]] && echo "CA Bundle is present" || echo "CA Bundle file missing or renamed"
 [[ -f ./cert_httpd/private.key ]] && echo "Private file is present" || echo "Private file missing or renamed"
-
-echo "Copying files.. "
+echo "------------------------------------------------------------"
+echo " "
+echo "Copying files...................... "
 \cp ./cert_httpd/certificate.crt /etc/pki/tls/certs/ && echo "Certificate Copy done............." || exit 0
 \cp ./cert_httpd/ca_bundle.crt /etc/pki/tls/certs/ && echo "CA Bundle Copy done..........." || exit 0
 \cp ./cert_httpd/private.key /etc/pki/tls/private/ && echo "Key Copy done..........." || exit 0
-
+echo "**************************************************************************"
 #permission for keys.
 echo "Permission Adjustment for certs"
+echo "-----------------------------------------"
 sleep 2
 sudo chown root:root /etc/pki/tls/certs/certificate.crt
 sudo chmod 644 /etc/pki/tls/certs/certificate.crt
-echo ""
+echo "-----------------------------------------"
 chown root:root /etc/pki/tls/private/private.key
 chmod 644 /etc/pki/tls/private/private.key
-echo ""
+echo "-----------------------------------------"
 sudo chown root:root /etc/pki/tls/certs/ca_bundle.crt
 sudo chmod 644 /etc/pki/tls/certs/ca_bundle.crt
-
+echo "-----------------------------------------"
+echo " "
 echo "List the certificates"
 ls -al /etc/pki/tls/certs/certificate.crt
 ls -al /etc/pki/tls/private/custom.key
-echo ""
+echo "-----------------------------------------------------------------"
 echo "Permission Adjustment done successfully"
-echo ""
+echo "------------------------------------------------------------------"
 echo "Transferring httpd.conf and from git "
 if [[ -f '/etc/httpd/conf.d/vhost.conf' ]]; then
     mv /etc/httpd/conf.d/vhost.conf /etc/httpd/conf.d/vhost_$now.bk && echo "vhosts.conf renamed " || echo "vhost.conf Rename failed"
@@ -113,11 +117,10 @@ echo ""
 if [[ -f '/etc/httpd/conf.d/ssl.conf' ]]; then
     mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl_$now.bk && echo "ssl.conf renamed " || echo "ssl.conf Rename failed"
 fi
-
-
-
+echo "****************************************************************"
 echo "Creating dhparams.pem file, This will take some time."
-echo ""
+echo "****************************************************************"
+echo " "
 sleep 2
 if [[ ! -f '/etc/pki/tls/certs/dhparams.pem' ]]; then
     openssl dhparam -out /etc/pki/tls/certs/dhparams.pem 2048
