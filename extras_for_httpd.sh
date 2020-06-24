@@ -47,6 +47,7 @@ else
     rm /usr/bin/openssl
     ln -s /usr/local/bin/openssl /usr/bin/openssl
     openssl version
+    openssl version |  grep -qi "openssl 1.1.1g" && echo "Installation done" || echo "Some problem occured.."
     cd ..
 fi
 if [ ! -f $FILE ]; then
