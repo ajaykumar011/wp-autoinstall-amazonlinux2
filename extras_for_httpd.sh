@@ -91,9 +91,12 @@ sleep 2
 sudo chown root:root /etc/pki/tls/certs/certificate.crt
 sudo chmod 644 /etc/pki/tls/certs/certificate.crt
 echo ""
-chown root:root /etc/pki/tls/private/custom.key
-chmod 644 /etc/pki/tls/private/custom.key
+chown root:root /etc/pki/tls/private/private.key
+chmod 644 /etc/pki/tls/private/private.key
 echo ""
+sudo chown root:root /etc/pki/tls/certs/ca_bundle.crt
+sudo chmod 644 /etc/pki/tls/certs/ca_bundle.crt
+
 echo "List the certificates"
 ls -al /etc/pki/tls/certs/certificate.crt
 ls -al /etc/pki/tls/private/custom.key
