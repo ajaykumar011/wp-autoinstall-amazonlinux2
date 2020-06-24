@@ -103,23 +103,24 @@ echo "Copying files...................... "
 \cp ./cert_httpd/certificate.crt /etc/pki/tls/certs/ && echo "Certificate Copy done............." || exit 0
 \cp ./cert_httpd/ca_bundle.crt /etc/pki/tls/certs/ && echo "CA Bundle Copy done..........." || exit 0
 \cp ./cert_httpd/private.key /etc/pki/tls/private/ && echo "Key Copy done..........." || exit 0
-echo "**************************************************************************"
+echo "**************************************************"
 #permission for keys.
 echo "Permission Adjustment for certs"
-echo "-----------------------------------------"
+echo "--------------[ Done 1 ]-------------------------"
 sleep 2
 sudo chown root:root /etc/pki/tls/certs/certificate.crt
 sudo chmod 644 /etc/pki/tls/certs/certificate.crt
-echo "-----------------------------------------"
+echo "--------------[ Done 2 ]-------------------------"
 chown root:root /etc/pki/tls/private/private.key
 chmod 644 /etc/pki/tls/private/private.key
-echo "-----------------------------------------"
+echo "--------------[ Done 3 ]-------------------------"
 sudo chown root:root /etc/pki/tls/certs/ca_bundle.crt
 sudo chmod 644 /etc/pki/tls/certs/ca_bundle.crt
-echo "-----------------------------------------"
+echo "--------------[ Done 4 ]-------------------------"
 echo " "
 echo "List the certificates"
 ls -al /etc/pki/tls/certs/certificate.crt
+ls -al /etc/pki/tls/certs/ca_bundle.crt
 ls -al /etc/pki/tls/private/custom.key
 echo "-----------------------------------------------------------------"
 echo "Permission Adjustment done successfully"
