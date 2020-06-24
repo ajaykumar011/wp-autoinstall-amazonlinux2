@@ -47,19 +47,22 @@ chmod 644 /etc/pki/tls/private/custom.key
 ls -al /etc/pki/tls/private/custom.key
 
 echo "Transferring httpd.conf and gzip.conf from git "
+if [[ -f '/etc/httpd/conf.d/vhost.conf' ]]; then
 \mv /etc/httpd/conf.d/vhost.conf /etc/httpd/conf.d/vhost_$now.bk
+fi
 
 \cp vhosts.conf /etc/httpd/conf.d/
 #\cp gzip.conf /etc/httpd/conf/
 
 echo "creating dhparams.pem file"
 sleep 2
-sudo openssl dhparam -out /etc/pki/tls/certs/dhparams.pem 2048
+openssl dhparam -out /etc/pki/tls/certs/dhparams.pem 2048
 
 echo "Copying ssl_httpd.conf file to /etc/httpd/conf.d directory"
-sudo mkdir -p /etc/httpd/conf/snippets
+if [[ ! -d '/etc/httpd/conf/snippets' ]]; then
+mkdir -p /etc/httpd/conf/snippets
+fi
 \cp ssl_httpd.conf /etc/httpd/conf/snippets
-
 
 httpd -t  && echo "Apache Configuration is Okay" || echo "Some Problem in Apache config"
 service httpd restart
