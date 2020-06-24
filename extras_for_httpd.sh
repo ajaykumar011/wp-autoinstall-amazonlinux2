@@ -76,9 +76,9 @@ fi
 echo "Transferring certificate.crt from git and custom.key from local to cert directory"
 sleep 2
 
-if [[ -f ./cert_httpd/cert_certificate.crt ]] && echo "Certificate is present" || echo "Certificate file missing or renamed"
-if [[ -f ./cert_httpd/ca_bundle.crt ]] && echo "CA Bundle is present" || echo "CA Bundle file missing or renamed"
-if [[ -f ./cert_httpd/private.key ]] && echo "Private file is present" || echo "Private file missing or renamed"
+[[ -f ./cert_httpd/certificate.crt ]] && echo "Certificate is present" || echo "Certificate file missing or renamed"
+[[ -f ./cert_httpd/ca_bundle.crt ]] && echo "CA Bundle is present" || echo "CA Bundle file missing or renamed"
+[[ -f ./cert_httpd/private.key ]] && echo "Private file is present" || echo "Private file missing or renamed"
 
 echo "Copying files.. "
 \cp ./cert_httpd/certificate.crt /etc/pki/tls/certs/ && echo "Certificate Copy done" || exit 0
@@ -110,12 +110,12 @@ echo "Creating dhparams.pem file, This will take some time."
 echo ""
 sleep 2
 if [[ ! -f '/etc/pki/tls/certs/dhparams.pem' ]]; then
-openssl dhparam -out /etc/pki/tls/certs/dhparams.pem 2048
+    openssl dhparam -out /etc/pki/tls/certs/dhparams.pem 2048
 fi
 echo ""
 echo "Copying ssl_httpd.conf file to /etc/httpd/conf.d directory"
 if [[ ! -d '/etc/httpd/conf/snippets' ]]; then
-mkdir -p /etc/httpd/conf/snippets
+    mkdir -p /etc/httpd/conf/snippets
 fi
 echo "ssl_httpd.conf file copying process"
 echo ""

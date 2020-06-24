@@ -31,8 +31,8 @@ fi
 echo "Transferring certificate.crt from git and custom.key from local to cert directory"
 sleep 2
 
-if [[ -f ./cert_nginx/certificate.crt ]] && echo "Certificate is present" || echo "Certificate file missing or renamed"
-if [[ -f ./cert_nginx/private.key ]] && echo "Private file is present" || echo "Private file missing or renamed"
+[[ -f ./cert_nginx/certificate.crt ]] && echo "Certificate is present" || echo "Certificate file missing or renamed"
+[[ -f ./cert_nginx/private.key ]] && echo "Private file is present" || echo "Private file missing or renamed"
 
 echo "Copying files.. "
 \cp ./cert_nginx/certificate.crt /etc/pki/tls/certs/ && echo "Certificate Copy done" || exit 0
