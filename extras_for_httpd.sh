@@ -62,7 +62,7 @@ echo "Copying ssl_httpd.conf file to /etc/httpd/conf.d directory"
 if [[ ! -d '/etc/httpd/conf/snippets' ]]; then
 mkdir -p /etc/httpd/conf/snippets
 fi
-\cp ssl_httpd.conf /etc/httpd/conf/snippets
+\cp ssl_httpd.conf /etc/httpd/conf/snippets && echo "ssl_httpd.conf copied" || "ssl_httpd.conf copy error"
 
 httpd -t  && echo "Apache Configuration is Okay" || echo "Some Problem in Apache config"
 service httpd restart
