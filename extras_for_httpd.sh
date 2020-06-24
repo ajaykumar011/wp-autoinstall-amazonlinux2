@@ -20,21 +20,22 @@ echo "Welcome to Automated SSL on Apache"
 echo "**********************************************"
 echo "This Script works only with default installation location of Apache"
 #read -t 5 -n 1 -s -r -p "Press any key to continue"
-domain_name=$(cat vhosts.conf | grep 'ServerName' |  awk '{print $2}' | head -1)
+infile_domain_name=$(cat vhosts.conf | grep 'ServerName' |  awk '{print $2}' | head -1)
 echo "Current domain name in the file is : $infile_domain_name"
 echo 
 read -e -p "Enter your domain to create custom vhosts.conf : " -i "cloudzone.today" new_domain_name
 
 if [[ new_domain_name != infile_domain_name ]]; then
      sed -i "s/$infile_domain_name/$new_domain_name/g" vhosts.conf
+    if [ $? -eq 0 ]; then
+        echo "Vhost.conf if now ready for new domain: $new_domain_name."
+    else
+        echo "Some Problem occured in making vhosts"
+        exit 1
+    fi
 fi
 
-if [ $? -eq 0 ]; then
-    echo "Vhost.conf if now ready for new domain: $new_domain_name."
-else
-    echo "Some Problem occured in making vhosts"
-    exit 1
-fi
+
 
 webroot=/var/www/html
 echo "Webroot is : $webroot"
