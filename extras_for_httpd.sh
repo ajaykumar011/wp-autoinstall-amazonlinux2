@@ -90,7 +90,9 @@ echo ""
 echo "Creating dhparams.pem file, This will take some time."
 echo ""
 sleep 2
+if [[ ! -f '/etc/pki/tls/certs/dhparams.pem' ]]; then
 openssl dhparam -out /etc/pki/tls/certs/dhparams.pem 2048
+fi
 echo ""
 echo "Copying ssl_httpd.conf file to /etc/httpd/conf.d directory"
 if [[ ! -d '/etc/httpd/conf/snippets' ]]; then
