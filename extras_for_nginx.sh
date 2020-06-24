@@ -30,16 +30,16 @@ if [[ yn2 == 'y' ]]; then
 fi
 echo "Transferring certificate.crt from git and custom.key from local to cert directory"
 sleep 2
-
+echo ""
 [[ -f ./cert_nginx/certificate.crt ]] && echo "Certificate is present" || echo "Certificate file missing or renamed"
 [[ -f ./cert_nginx/private.key ]] && echo "Private file is present" || echo "Private file missing or renamed"
 
 echo "Copying files.. "
 \cp ./cert_nginx/certificate.crt /etc/pki/tls/certs/ && echo "Certificate Copy done" || exit 0
-\cp ./cert_nginx/private.key /etc/pki/tls/private/ && echo " Key Copy done" || exit 0
-
+\cp ./cert_nginx/private.key /etc/pki/tls/private/ && echo "Key Copy done" || exit 0
+echo ""
 #permission for keys.
-echo "Permission Adjustment for certs"
+echo "Permission Adjustment for certficates"
 sleep 2
 sudo chown root:root /etc/pki/tls/certs/certificate.crt
 sudo chmod 644 /etc/pki/tls/certs/certificate.crt
