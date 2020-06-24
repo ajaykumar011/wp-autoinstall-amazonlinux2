@@ -26,6 +26,33 @@ if [[ $webroot != "/var/www/html" ]]; then
 	echo "This script only work with default config of Apache"
 	exit 1
 fi	
+#Open SSL Installation section.
+openssl version |  grep -qi "openssl 1.1.1g"
+if [ $? -eq 0 ]; then
+    echo "Open SSL Seems to be updated."
+else
+    echo "Open SSL outdate.. Needs to update. please wait"
+    echo "We are installation Openssl 1.1.1g which is updated during this script."
+    sleep 3
+    sudo yum group install "Development Tools" -y
+    wget https://www.openssl.org/source/openssl-1.1.1g.tar.gz
+    sudo tar -xzf openssl-1.1.1g.tar.gz
+    cd openssl-1.1.1g/
+    ./config
+    make
+    make install
+    mv /usr/bin/openssl /root/
+    ln -s /usr/local/lib64/libssl.so.1.1 /usr/lib64/
+    ln -s /usr/local/lib64/libcrypto.so.1.1 /usr/lib64/
+    rm /usr/bin/openssl
+    ln -s /usr/local/bin/openssl /usr/bin/openssl
+    openssl version
+    cd ..
+fi
+if [ ! -f $FILE ]; then
+   echo "Directory change failed." 
+   exit 1
+fi
 yum install mod_ssl -y
 systemctl is-active --quiet httpd && echo "Apache is running" || echo "Apache is NOT running"
 echo "Genrating custom.key private key file"
