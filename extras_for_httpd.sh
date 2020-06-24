@@ -55,9 +55,9 @@ if [ ! -f $FILE ]; then
    exit 1
 fi
 yum install mod_ssl -y
-systemctl is-active --quiet httpd && echo "Apache is running" || echo "Apache is NOT running"
+systemctl is-active --quiet httpd && echo "Apache is running.........." || echo "Apache is NOT running..........."
 
-read -e -p "Do you want to generate CSR [y/n]" -i "n" yn
+read -e -p "Do you want to generate CSR [y/n]: " -i "n" yn
 if [[ yn == 'y' ]]; then
     sudo openssl req -new -key custom.key -out csr.pem
     ll csr.pem
@@ -65,11 +65,11 @@ if [[ yn == 'y' ]]; then
     exit 0
 fi
 
-read -e -p "Do you want to private key [y/n]" -i "n" yn2
+read -e -p "Do you want to private key [y/n]: " -i "n" yn2
 if [[ yn2 == 'y' ]]; then
     openssl genrsa -out custom.key 4096
     ll custom.key
-    echo "private key file is required only for the first time when ca-crt is included"
+    echo "Private key file is required only for the first time when ca-crt is included"
     exit 0
 fi
 #sudo openssl req -new -key custom.key -out csr.pem
@@ -81,9 +81,9 @@ sleep 2
 [[ -f ./cert_httpd/private.key ]] && echo "Private file is present" || echo "Private file missing or renamed"
 
 echo "Copying files.. "
-\cp ./cert_httpd/certificate.crt /etc/pki/tls/certs/ && echo "Certificate Copy done" || exit 0
-\cp ./cert_httpd/ca_bundle.crt /etc/pki/tls/certs/ && echo "CA Bundle Copy done" || exit 0
-\cp ./cert_httpd/private.key /etc/pki/tls/private/ && echo " Key Copy done" || exit 0
+\cp ./cert_httpd/certificate.crt /etc/pki/tls/certs/ && echo "Certificate Copy done............." || exit 0
+\cp ./cert_httpd/ca_bundle.crt /etc/pki/tls/certs/ && echo "CA Bundle Copy done..........." || exit 0
+\cp ./cert_httpd/private.key /etc/pki/tls/private/ && echo "Key Copy done..........." || exit 0
 
 #permission for keys.
 echo "Permission Adjustment for certs"
@@ -102,10 +102,17 @@ echo "Permission Adjustment done successfully"
 echo ""
 echo "Transferring httpd.conf and from git "
 if [[ -f '/etc/httpd/conf.d/vhost.conf' ]]; then
-    \mv /etc/httpd/conf.d/vhost.conf /etc/httpd/conf.d/vhost_$now.bk && echo "vhosts.conf renamed " || echo "vhost.conf Rename failed"
+    mv /etc/httpd/conf.d/vhost.conf /etc/httpd/conf.d/vhost_$now.bk && echo "vhosts.conf renamed " || echo "vhost.conf Rename failed"
 fi
 \cp vhosts.conf /etc/httpd/conf.d/ && echo "vhosts.conf copied " || echo "vhosts.conf copy failed"
 echo ""
+
+if [[ -f '/etc/httpd/conf.d/ssl.conf' ]]; then
+    mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl_$now.bk && echo "ssl.conf renamed " || echo "ssl.conf Rename failed"
+fi
+\cp ssl.conf /etc/httpd/conf.d/ && echo "ssl.conf copied " || echo "ssl.conf copy failed"
+
+
 echo "Creating dhparams.pem file, This will take some time."
 echo ""
 sleep 2

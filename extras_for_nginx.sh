@@ -13,7 +13,7 @@ if [ $USER != "root" ]; then
 fi
 systemctl is-active --quiet nginx && echo "Nginx is running" || echo "Nginx is NOT running"
 
-read -e -p "Do you want to generate CSR [y/n]" -i "n" yn
+read -e -p "Do you want to generate CSR [y/n]: " -i "n" yn
 if [[ yn == 'y' ]]; then
     sudo openssl req -new -key custom.key -out csr.pem
     ll csr.pem
@@ -35,8 +35,8 @@ echo ""
 [[ -f ./cert_nginx/private.key ]] && echo "Private file is present" || echo "Private file missing or renamed"
 
 echo "Copying files.. "
-\cp ./cert_nginx/certificate.crt /etc/pki/tls/certs/ && echo "Certificate Copy done" || exit 0
-\cp ./cert_nginx/private.key /etc/pki/tls/private/ && echo "Key Copy done" || exit 0
+\cp ./cert_nginx/certificate.crt /etc/pki/tls/certs/ && echo "Certificate Copy done............." || exit 0
+\cp ./cert_nginx/private.key /etc/pki/tls/private/ && echo "Key Copy done.............." || exit 0
 echo ""
 #permission for keys.
 echo "Permission Adjustment for certficates"
