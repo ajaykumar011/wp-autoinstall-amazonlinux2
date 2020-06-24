@@ -56,13 +56,34 @@ if [ ! -f $FILE ]; then
 fi
 yum install mod_ssl -y
 systemctl is-active --quiet httpd && echo "Apache is running" || echo "Apache is NOT running"
-echo "Genrating custom.key private key file"
-openssl genrsa -out custom.key 4096
+
+read -e -p "Do you want to generate CSR [y/n]" -i "n" yn
+if [[ yn == 'y']]; then
+    sudo openssl req -new -key custom.key -out csr.pem
+    ll csr.pem
+    echo "CSR is generated, you can copy the csr file and send to CA for certificate"
+    exit 0
+fi
+
+read -e -p "Do you want to private key [y/n]" -i "n" yn2
+if [[ yn2 == 'y']]; then
+    openssl genrsa -out custom.key 4096
+    ll custom.key
+    echo "private key file is required only for the first time when ca-crt is included"
+    exit 0
+fi
 #sudo openssl req -new -key custom.key -out csr.pem
 echo "Transferring certificate.crt from git and custom.key from local to cert directory"
 sleep 2
-\cp certificate.crt /etc/pki/tls/certs/
-\cp custom.key /etc/pki/tls/private/
+
+if [[ -f ./cert_httpd/cert_certificate.crt ]] && echo "Certificate is present" || echo "Certificate file missing or renamed"
+if [[ -f ./cert_httpd/ca_bundle.crt ]] && echo "CA Bundle is present" || echo "CA Bundle file missing or renamed"
+if [[ -f ./cert_httpd/private.key ]] && echo "Private file is present" || echo "Private file missing or renamed"
+
+echo "Copying files.. "
+\cp ./cert_httpd/certificate.crt /etc/pki/tls/certs/ && echo "Certificate Copy done" || exit 0
+\cp ./cert_httpd/ca_bundle.crt /etc/pki/tls/certs/ && echo "CA Bundle Copy done" || exit 0
+\cp ./cert_httpd/private.key /etc/pki/tls/private/ && echo " Key Copy done" || exit 0
 
 #permission for keys.
 echo "Permission Adjustment for certs"
@@ -81,11 +102,9 @@ echo "Permission Adjustment done successfully"
 echo ""
 echo "Transferring httpd.conf and from git "
 if [[ -f '/etc/httpd/conf.d/vhost.conf' ]]; then
-\mv /etc/httpd/conf.d/vhost.conf /etc/httpd/conf.d/vhost_$now.bk
+    \mv /etc/httpd/conf.d/vhost.conf /etc/httpd/conf.d/vhost_$now.bk && echo "vhosts.conf renamed " || echo "vhost.conf Rename failed"
 fi
-echo "Copying vhosts.conf custom file from git."
-\cp vhosts.conf /etc/httpd/conf.d/
-#\cp gzip.conf /etc/httpd/conf/
+\cp vhosts.conf /etc/httpd/conf.d/ && echo "vhosts.conf copied " || echo "vhosts.conf copy failed"
 echo ""
 echo "Creating dhparams.pem file, This will take some time."
 echo ""
