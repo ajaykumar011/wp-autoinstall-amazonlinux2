@@ -26,7 +26,7 @@ echo
 read -e -p "Enter your domain to create custom vhosts.conf : " -i "cloudzone.today" new_domain_name
 
 if [[ new_domain_name != infile_domain_name ]]; then
-     sed -i "s/$infile_domain_name/$new_domain_name/g" vhosts.conf
+     sed -i -e "s/$infile_domain_name/$new_domain_name/g" vhosts.conf
     if [ $? -eq 0 ]; then
         echo "Vhost.conf if now ready for new domain: $new_domain_name."
     else
