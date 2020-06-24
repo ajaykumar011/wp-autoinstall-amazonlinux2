@@ -41,30 +41,39 @@ echo "Permission Adjustment for certs"
 sleep 2
 sudo chown root:root /etc/pki/tls/certs/certificate.crt
 sudo chmod 644 /etc/pki/tls/certs/certificate.crt
-ls -al /etc/pki/tls/certs/certificate.crt
+echo ""
 chown root:root /etc/pki/tls/private/custom.key
 chmod 644 /etc/pki/tls/private/custom.key
+echo ""
+echo "List the certificates"
+ls -al /etc/pki/tls/certs/certificate.crt
 ls -al /etc/pki/tls/private/custom.key
-
+echo ""
+echo "Permission Adjustment done successfully"
+echo ""
 echo "Transferring httpd.conf and gzip.conf from git "
 if [[ -f '/etc/httpd/conf.d/vhost.conf' ]]; then
 \mv /etc/httpd/conf.d/vhost.conf /etc/httpd/conf.d/vhost_$now.bk
 fi
-
+echo "Copying vhosts.conf custom file from git."
 \cp vhosts.conf /etc/httpd/conf.d/
 #\cp gzip.conf /etc/httpd/conf/
-
-echo "creating dhparams.pem file"
+echo ""
+echo "Creating dhparams.pem file, This will take some time."
+echo ""
 sleep 2
 openssl dhparam -out /etc/pki/tls/certs/dhparams.pem 2048
-
+echo ""
 echo "Copying ssl_httpd.conf file to /etc/httpd/conf.d directory"
 if [[ ! -d '/etc/httpd/conf/snippets' ]]; then
 mkdir -p /etc/httpd/conf/snippets
 fi
+echo "ssl_httpd.conf file copying process"
+echo ""
 \cp ssl_httpd.conf /etc/httpd/conf/snippets && echo "ssl_httpd.conf copied" || echo "ssl_httpd.conf copy error"
 
 httpd -t  && echo "Apache Configuration is Okay" || echo "Some Problem in Apache config"
+echo ""
 service httpd restart
 
 echo "******************************************************"
