@@ -79,7 +79,7 @@ ls -al /etc/pki/tls/private/custom.key
 echo ""
 echo "Permission Adjustment done successfully"
 echo ""
-echo "Transferring httpd.conf and gzip.conf from git "
+echo "Transferring httpd.conf and from git "
 if [[ -f '/etc/httpd/conf.d/vhost.conf' ]]; then
 \mv /etc/httpd/conf.d/vhost.conf /etc/httpd/conf.d/vhost_$now.bk
 fi
