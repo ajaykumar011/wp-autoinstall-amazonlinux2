@@ -57,8 +57,8 @@ sleep 2
 sudo openssl dhparam -out /etc/pki/tls/certs/dhparams.pem 2048
 
 echo "Copying ssl_httpd.conf file to /etc/httpd/conf.d directory"
-#sudo mkdir -p /etc/httpd/conf.d/
-\cp ssl_httpd.conf /etc/httpd/conf.d/
+sudo mkdir -p /etc/httpd/conf/snippets
+\cp ssl_httpd.conf /etc/httpd/conf/snippets
 
 
 httpd -t  && echo "Apache Configuration is Okay" || echo "Some Problem in Apache config"
