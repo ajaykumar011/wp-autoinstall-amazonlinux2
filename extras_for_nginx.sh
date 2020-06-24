@@ -14,7 +14,7 @@ fi
 systemctl is-active --quiet nginx && echo "Nginx is running" || echo "Nginx is NOT running"
 
 read -e -p "Do you want to generate CSR [y/n]" -i "n" yn
-if [[ yn == 'y']]; then
+if [[ yn == 'y' ]]; then
     sudo openssl req -new -key custom.key -out csr.pem
     ll csr.pem
     echo "CSR is generated, you can copy the csr file and send to CA for certificate"
@@ -22,7 +22,7 @@ if [[ yn == 'y']]; then
 fi
 
 read -e -p "Do you want to private key [y/n]" -i "n" yn2
-if [[ yn2 == 'y']]; then
+if [[ yn2 == 'y' ]]; then
     openssl genrsa -out custom.key 4096
     ll custom.key
     echo "private key file is required only for the first time when ca-crt is included"
