@@ -2,7 +2,7 @@
 webroot=httpd
 read -p "Do you want to implement SSL with the site [y/n]: " yn
 echo "value of yn is : $yn"
-if [[ yn == 'y' ]]; then
+if [[ yn == "y" ]]; then
     echo "Let me check your server configuraiton.."
     progress
     if [ $webroot == "httpd" ]; then
