@@ -8,11 +8,13 @@ if [[ $q == "y" ]]; then
     if [ $webroot == "httpd" ]; then
         echo "You are running apache: "
         echo "you can run the script [sh extras_for_httpd.sh] after exiting this program"
-        #sh extras_for_httpd.sh
+        sleep 5
+        sh extras_for_httpd.sh
     elif [ $webroot == "nginx" ]; then
         echo "You are running Nginx: "
         echo "you can run the script [sh extras_for_nginx.sh] after exiting this program"
-        #sh extras_for_nginx.sh
+        sleep 5
+        sh extras_for_nginx.sh
     else
         echo "Something wrong in server selection"
     fi
