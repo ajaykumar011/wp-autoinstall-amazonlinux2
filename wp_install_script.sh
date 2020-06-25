@@ -8,31 +8,21 @@ if [ $USER != "root" ]; then
         echo "Script must be run as user sudo or root "
         exit 1
 fi
-
 echo "**********************************************"
-echo "Welcome to Automated installation of Wordpress"
+echo  -e "\033[33;5;7mWelcome to Automated installation of Wordpress\033[0m"
 echo "**********************************************"
-read -p "Enter your root password of DB: " -s MYSQL_PASS
-echo "Thanks.. We don't need other inputs.."
-mysql -u root -p$MYSQL_PASS -e"exit"
-if [ $? -eq 0 ]; then
-    echo "Mysql-root password is correct... Logging in.."
-else
-    echo "Please check your msyql-root credentials"
-    exit 1
-fi
 echo "Date and Time:" $(date +%F_%R)
 echo "Sever Uptime is:" && uptime
-sleep 2
-clear
+sleep 3
+echo "----------------------------------------------"
 echo "Amazon Linux Information section"
 echo "----------------------------------------------"
 cat /etc/system-release
-echo ""
+echo " "
 curl http://169.254.169.254/latest/meta-data/public-hostname
-echo ""
+echo " "
 curl http://169.254.169.254/latest/meta-data/public-ipv4
-echo ""
+echo " "
 curl http://169.254.169.254/latest/meta-data/ami-id
 echo "----------------------------------------------"
 
@@ -102,52 +92,77 @@ echo "Port Information"
 echo "==================================================="
 netstat -tulnp | grep $web_service
 $SHELL –version 
-sleep 1
+sleep 5
+clear
 echo "---------------------------------------------------"
-echo "MySQL Information..."
+#colour full text below.
+#echo  -e "\033[33;5;7mTitle of the Program\033[0m"
+#echo  -e "\033[5mTitle of the Program\033[0m"
+#echo -e "\e[1;31m This is red text \e[0m"
+#echo -e "\e[1;32m This is green text \e[0m"
+
+echo  -e "\033[5mMySQL Information & Prompt Action\033[0m"
 echo "----------------------------------------------------"
-mysqladmin -u root -p$MYSQL_PASS ping
-mysqladmin -u root -p$MYSQL_PASS version
-mysqladmin -u root -p$MYSQL_PASS status
-
-
-#we are generating databasename and username from /dev/urandom command. 
-dbname=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8 ; echo '');
-
-#we are generating username from openssl command
-dbuser=$(openssl rand -base64 12 | tr -dc A-Za-z | head -c 8 ; echo '')
-
-#Openssl is another way to generating 64 characters long password)
-#dbpass=$(openssl rand -hex 8); #It generates max 16 digits password we can also use this for all above process.
-
-dbpass=$(openssl rand -base64 12 | tr -dc A-Za-z | head -c 12 ; echo '')
-
-if [ $? -eq 0 ]; then
-    echo "Wordpress DB credenetials successfully."
+echo "Hey! Do you want me to create a new database for you [y/n] :" -i "n" create_db_yes_no
+if [[ create_db_yes_no != "y" ]]; then
+    echo "Okay, You seem to be with your own RDS database...."
+    echo "Enter the database information to use with Wordpress"
+    echo "----------------------------------------------------"
+    echo "Enter your database host or endpoint: " dbhost
+    echo "Enter your database name: " dbname
+    echo "Enter your database username: " dbuser
+    echo "Enter your database password: " dbpass
+    echo "Thank you.."
+fi 
 else
-    echo "Wordpress DB credentials generation failed"
-     exit 1
+    echo "This only works if you mysql-server is hosted on the same server"
+    echo "We understood. you want me to create a db for you on MySQL or Mariadb.."
+    read -p "Enter your root or super user password :  " -s MYSQL_PASS
+    echo "Thank you...Let me check your root passwrod.. Please wait.."
+    sleep 3
+    mysql -u root -p$MYSQL_PASS -e"exit"
+    if [ $? -eq 0 ]; then
+        echo "Mysql-root password is correct... Logging in.."
+        mysqladmin -u root -p$MYSQL_PASS ping
+        mysqladmin -u root -p$MYSQL_PASS version
+        mysqladmin -u root -p$MYSQL_PASS status
+        #we are generating databasename and username from /dev/urandom command. 
+        dbname=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 8 ; echo '');
+        #we are generating username from openssl command
+        dbuser=$(openssl rand -base64 12 | tr -dc A-Za-z | head -c 8 ; echo '')
+        #Openssl is another way to generating 64 characters long password)
+        #dbpass=$(openssl rand -hex 8); #It generates max 16 digits password we can also use this for all above process.
+        dbpass=$(openssl rand -base64 12 | tr -dc A-Za-z | head -c 12 ; echo '')
+        dbhost="localhost"
+        if [ $? -eq 0 ]; then
+            echo "Wordpress DB credenetials successfully."
+        else
+            echo "Wordpress DB credentials generation failed"
+            exit 1
+        fi
+        echo sleep 2
+        echo "------------------------DB setup started-----------------------------------"
+        Q1="CREATE DATABASE IF NOT EXISTS $dbname;"
+        Q2="GRANT USAGE ON *.* TO $dbuser@localhost IDENTIFIED BY '$dbpass';"
+        Q3="GRANT ALL PRIVILEGES ON $dbname.* TO $dbuser@localhost;"
+        Q4="FLUSH PRIVILEGES;"
+        Q5="SHOW DATABASES;"	
+        SQL="${Q1}${Q2}${Q3}${Q4}${Q5}"
+        mysql -uroot -p$MYSQL_PASS -e "$SQL" && echo "DB Creation done" || echo "DB Creation failed"
+        sleep 1
+    else
+        echo "Please check your msyql-root credentials"
+        sleep 2
+        exit 1
+    fi
 fi
-sleep 1
 
-echo "------------------------DB setup started-----------------------------------"
-Q1="CREATE DATABASE IF NOT EXISTS $dbname;"
-Q2="GRANT USAGE ON *.* TO $dbuser@localhost IDENTIFIED BY '$dbpass';"
-Q3="GRANT ALL PRIVILEGES ON $dbname.* TO $dbuser@localhost;"
-Q4="FLUSH PRIVILEGES;"
-Q5="SHOW DATABASES;"	
-SQL="${Q1}${Q2}${Q3}${Q4}${Q5}"
-  
-mysql -uroot -p$MYSQL_PASS -e "$SQL" && echo "DB Creation done" || echo "DB Creation failed"
-sleep 1
-
+echo "Checking Webroot Folder .. please wait.."
+sleep 3
 cd $webroot
 if [ -z "$(ls -A $webroot)" ]; then
-
    echo "$webroot is Empty"
-
 else
-
    echo "There are some files in the $webroot"
    echo "Zipping old files with lastbackup.zip, this can be found in webroot directory"
    cd $webroot
@@ -157,9 +172,7 @@ else
 #  rm -rfv !{"lastbackup.zip"}
    rm -rf .*
    rm -rf *
-
 fi
-
 sleep 1
 curl -O https://wordpress.org/latest.tar.gz
 echo "Downloading ....................................."
@@ -176,18 +189,22 @@ chmod +x salt.sh
 rm -rf wordpress-config
 rm -R wordpress
 echo "------------------------------------------"
-echo "Autogenrated DB Info:"
+echo "Here is the details of databse we got from above. "
 echo "------------------------------------------"
 echo "DB Name: $dbname"
 echo "DB User: $dbuser"
-echo "DB Pwd : $dbpass"
-echo "Host   : localhost"
+echo "DB Password : $dbpass"
+echo "Host Name : $dbhost"
 echo "------------------------------------------"
+echo " "
+echo "Entering the information in wp-config file.. please wait."
 
 perl -pi -e "s/database_name_here/$dbname/g" wp-config.php
 perl -pi -e "s/username_here/$dbuser/g" wp-config.php
 perl -pi -e "s/password_here/$dbpass/g" wp-config.php
-
+if [[ $dbhost != "localhost" ]]; then
+perl -pi -e "s/localhost/$host/g" wp-config.php
+fi
 #Salt configuration section
 sh salt.sh
 rm -rf salt.sh
@@ -229,7 +246,8 @@ echo Server Information
 echo "******************************************************"
 curl -I localhost
 echo "=========================================================="
-echo "Installation is finished. "
+echo  -e "\033[5mInstallation is finished\033[0m"
+echo -e "\e[1;32m Great Work.. \e[0m"
 echo "=========================================================="
 echo "$(tput setaf 7)$(tput setab 6)---|-WP READY TO ROCK-|---$(tput sgr 0)"
 read -e -p "Do you want to implement SSL with the site [y/n]: " -i "y" yn
