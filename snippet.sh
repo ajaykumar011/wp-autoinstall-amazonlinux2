@@ -1,6 +1,6 @@
 #!/bin/bash -e
 webroot=httpd
-read -e -p "Do you want to implement SSL with the site [y/n]: " -i "y" yn
+read -p "Do you want to implement SSL with the site [y/n]: " yn
 if [[ yn == 'y' ]]; then
     echo "Let me check your server configuraiton.."
     progress
