@@ -130,6 +130,8 @@ if [[ create_db_yes_no != "y" ]]; then
     [ -z "$dbuser" ] && echo "Empty Input" 
     read -p "Enter your database password: " -s dbpass
     [ -z "$dbpass" ] && echo "Empty Input" 
+    echo " "
+    echo " "
     echo "Thank you..Please wait checking your credentials..."
     progress
     mysqladmin processlist -h $dbhost -P 3306 -u$dbuser -p$dbpass version | head -5
@@ -272,12 +274,9 @@ rm latest.tar.gz
 echo "******************************************************"
 grep -qi 'Wordpress' $webroot/index.php && echo "Wordpress installed" || echo "Some problem"
 echo "******************************************************"
-echo Server Information
-echo "******************************************************"
-curl -I localhost
 echo "=========================================================="
 echo -e "\033[5mInstallation is finished\033[0m"
-echo -e "\e[1;32m Great Work.. \e[0m"
+echo -e "\e[1;32mGreat Work.. \e[0m"
 echo "=========================================================="
 echo "$(tput setaf 7)$(tput setab 6)---|-WP READY TO ROCK-|---$(tput sgr 0)"
 read -p "Do you want to implement SSL with the site [y/n]: " q
@@ -300,5 +299,6 @@ if [[ $q == "y" ]]; then
     fi
 else
     echo "Thank you and enjoy browsing the site"
-    curl -I 
+    echo "If you see 200 OK it means your site is working fine"
+    curl -I localhost
 fi
