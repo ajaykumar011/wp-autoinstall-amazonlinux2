@@ -12,6 +12,11 @@ function progress(){
     echo -ne '###################################(100%)\r'
     echo -ne '\n'
 }
+#colour full text below.
+#echo  -e "\033[33;5;7mTitle of the Program\033[0m"
+#echo  -e "\033[5mTitle of the Program\033[0m"
+#echo -e "\e[1;31m This is red text \e[0m"
+#echo -e "\e[1;32m This is green text \e[0m"
 
 # set your variables here
 webroot_user=apache #for permission
@@ -106,14 +111,9 @@ chkconfig --list
 echo "Port Information"
 echo "==================================================="
 netstat -tulnp | grep $web_service
-sleep 5
+progress
 clear
 echo "---------------------------------------------------"
-#colour full text below.
-#echo  -e "\033[33;5;7mTitle of the Program\033[0m"
-#echo  -e "\033[5mTitle of the Program\033[0m"
-#echo -e "\e[1;31m This is red text \e[0m"
-#echo -e "\e[1;32m This is green text \e[0m"
 
 echo  -e "\033[5mMySQL Information & Prompt Action\033[0m"
 echo "----------------------------------------------------"
@@ -123,14 +123,23 @@ if [[ create_db_yes_no != "y" ]]; then
     echo "Enter the database information to use with Wordpress"
     echo "----------------------------------------------------"
     read -p "Enter your database host or endpoint: " dbhost
-    [ -z "$dbhost" ] && echo "Empty Input" ; exit 1
+    [ -z "$dbhost" ] && echo "Empty Input" 
     read -p "Enter your database name: " dbname
-    [ -z "$dbname" ] && echo "Empty Input" ; exit 1
+    [ -z "$dbname" ] && echo "Empty Input" 
     read -p "Enter your database username: " dbuser
-    [ -z "$dbuser" ] && echo "Empty Input" ; exit 1
+    [ -z "$dbuser" ] && echo "Empty Input" 
     read -p "Enter your database password: " -s dbpass
-    [ -z "$dbpass" ] && echo "Empty Input" ; exit 1
-    echo "Thank you.."
+    [ -z "$dbpass" ] && echo "Empty Input" 
+    echo "Thank you..Please wait checking your credentials..."
+    progress
+    mysqladmin processlist -h $dbhost -P 3306 -u$dbuser -p$dbpass version | head -5
+    echo "Value in db passwd:$dbpass"
+    if [ $? -eq 0 ]; then
+        echo -e "\e[1;32m Good news. Database credentials are perfect... \e[0m"
+    else
+        echo -e "\e[1;31m Database credentials failed..Not able to login. \e[0m"
+            exit 1
+    fi
 else
     echo "This is automated db creation on local mysql server"
     echo "==================================================="
