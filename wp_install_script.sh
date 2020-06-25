@@ -122,10 +122,14 @@ if [[ create_db_yes_no != "y" ]]; then
     echo "Okay, You seem to be with your own RDS database...."
     echo "Enter the database information to use with Wordpress"
     echo "----------------------------------------------------"
-    echo "Enter your database host or endpoint: " dbhost
-    echo "Enter your database name: " dbname
-    echo "Enter your database username: " dbuser
-    echo "Enter your database password: " dbpass
+    read -p "Enter your database host or endpoint: " dbhost
+    [ -z "$dbhost" ] && echo "Empty Input" ; exit 1
+    read -p "Enter your database name: " dbname
+    [ -z "$dbname" ] && echo "Empty Input" ; exit 1
+    read -p "Enter your database username: " dbuser
+    [ -z "$dbuser" ] && echo "Empty Input" ; exit 1
+    read -p "Enter your database password: " -s dbpass
+    [ -z "$dbpass" ] && echo "Empty Input" ; exit 1
     echo "Thank you.."
 else
     echo "This is automated db creation on local mysql server"
@@ -272,11 +276,9 @@ if [[ yn == 'y' ]]; then
     if [ $webroot == "httpd" ]; then
         echo "You are running apache: "
         sudo sh extras_for_httpd.sh
-    fi
     elif [ $webroot == "httpd" ]; then
         echo "You are running Nginx: "
         sudo sh extras_for_nginx.sh
-    fi
     else
         echo "Thank you.."
 fi
