@@ -233,7 +233,7 @@ perl -pi -e "s/database_name_here/$dbname/g" wp-config.php
 perl -pi -e "s/username_here/$dbuser/g" wp-config.php
 perl -pi -e "s/password_here/$dbpass/g" wp-config.php
 if [[ $dbhost != "localhost" ]]; then
-perl -pi -e "s/localhost/$host/g" wp-config.php
+perl -pi -e "s/localhost/$dbhost/g" wp-config.php
 fi
 #Salt configuration section
 sh salt.sh
@@ -298,4 +298,7 @@ if [[ $q == "y" ]]; then
     else
         echo "Something wrong in server selection"
     fi
+else
+    echo "Thank you and enjoy browsing the site"
+    curl -I 
 fi

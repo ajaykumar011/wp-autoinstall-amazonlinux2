@@ -18,4 +18,6 @@ if [[ $q == "y" ]]; then
     else
         echo "Something wrong in server selection"
     fi
+else
+    echo "Thank you and enjoying browsing"    
 fi
