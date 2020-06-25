@@ -1,6 +1,18 @@
 #!/usr/bin/expect -f
 
 clear
+#a progress bar function.
+function progress(){
+    echo -ne '#####                     (25%)\r'
+    sleep .5
+    echo -ne '#############             (50%)\r'
+    sleep .5
+    echo -ne '#######################   (75%)\r'
+    sleep .5
+    echo -ne '###################################(100%)\r'
+    echo -ne '\n'
+}
+
 # set your variables here
 webroot_user=apache #for permission
 webroot_group=apache
@@ -24,13 +36,14 @@ echo " "
 curl http://169.254.169.254/latest/meta-data/public-ipv4
 echo " "
 curl http://169.254.169.254/latest/meta-data/ami-id
+echo " "
 echo "----------------------------------------------"
 
 if [ $? -eq 0 ]; then
-    echo "Great Let's go OS found correct."
+    echo -e "\e[1;32m Great Let's Begin. \e[0m"
 else
     echo "Not found [Amazon Linux OS]"
-     exit 1
+    exit 1
 fi
 
 read -t 3 -n 1 -s -r -p "Press any key to continue"
@@ -46,9 +59,9 @@ if [[ `ps -acx|grep httpd|wc -l` > 0 ]]; then
     echo "Server Configured with Apache"
     httpd -v && echo "Apache OK" || exit 1
     echo "Suggested Server Name:"
-    grep 'ServerName' /etc/httpd/conf/httpd.conf
+    grep 'ServerName' /etc/httpd/conf/httpd.conf | awk '{ print $2}' | cut -d ':' -f 1
     echo "Suggested Webroot is below: "
-    grep 'DocumentRoot' /etc/httpd/conf/httpd.conf
+    grep 'DocumentRoot ' /etc/httpd/conf/httpd.conf | awk  '{print $1}'
     read -e -p "Enter Your Webroot if not default :" -i "/var/www/html" webroot
     echo "Webroot Selected is: $webroot"
     sleep 3
@@ -75,11 +88,13 @@ fi
 echo "Let's check the PHP Status..."
 systemctl is-active --quiet php-fpm && echo "PHP is running" || echo "PHP is NOT running"
 php -v
-read -t 5 -n 1 -s -r -p "Press any key to continue"
+sleep 5
+echo " "
 echo "Database Version Information "
 mysql -V
 sleep 1
 echo "Going to Install some necessary tools"
+progress
 sleep 2
 yum -y install net-tools wget zip unzip curl git pv ed expect
 clear
@@ -91,7 +106,6 @@ chkconfig --list
 echo "Port Information"
 echo "==================================================="
 netstat -tulnp | grep $web_service
-$SHELL –version 
 sleep 5
 clear
 echo "---------------------------------------------------"
@@ -103,7 +117,7 @@ echo "---------------------------------------------------"
 
 echo  -e "\033[5mMySQL Information & Prompt Action\033[0m"
 echo "----------------------------------------------------"
-echo "Hey! Do you want me to create a new database for you [y/n] :" -i "n" create_db_yes_no
+read -e -p "Hey! Do you want me to create a new database for you [y/n] :" -i "n" create_db_yes_no
 if [[ create_db_yes_no != "y" ]]; then
     echo "Okay, You seem to be with your own RDS database...."
     echo "Enter the database information to use with Wordpress"
@@ -113,8 +127,9 @@ if [[ create_db_yes_no != "y" ]]; then
     echo "Enter your database username: " dbuser
     echo "Enter your database password: " dbpass
     echo "Thank you.."
-fi 
 else
+    echo "This is automated db creation on local mysql server"
+    echo "==================================================="
     echo "This only works if you mysql-server is hosted on the same server"
     echo "We understood. you want me to create a db for you on MySQL or Mariadb.."
     read -p "Enter your root or super user password :  " -s MYSQL_PASS
@@ -135,6 +150,7 @@ else
         dbpass=$(openssl rand -base64 12 | tr -dc A-Za-z | head -c 12 ; echo '')
         dbhost="localhost"
         if [ $? -eq 0 ]; then
+            progress
             echo "Wordpress DB credenetials successfully."
         else
             echo "Wordpress DB credentials generation failed"
@@ -158,7 +174,8 @@ else
 fi
 
 echo "Checking Webroot Folder .. please wait.."
-sleep 3
+progress
+
 cd $webroot
 if [ -z "$(ls -A $webroot)" ]; then
    echo "$webroot is Empty"
@@ -198,7 +215,7 @@ echo "Host Name : $dbhost"
 echo "------------------------------------------"
 echo " "
 echo "Entering the information in wp-config file.. please wait."
-
+progress
 perl -pi -e "s/database_name_here/$dbname/g" wp-config.php
 perl -pi -e "s/username_here/$dbuser/g" wp-config.php
 perl -pi -e "s/password_here/$dbpass/g" wp-config.php
