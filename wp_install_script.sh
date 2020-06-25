@@ -135,9 +135,9 @@ if [[ create_db_yes_no != "y" ]]; then
     mysqladmin processlist -h $dbhost -P 3306 -u$dbuser -p$dbpass version | head -5
     echo "Value in db passwd:$dbpass"
     if [ $? -eq 0 ]; then
-        echo -e "\e[1;32m Good news. Database credentials are perfect... \e[0m"
+        echo -e "\e[1;32mGood news. Database credentials are perfect... \e[0m"
     else
-        echo -e "\e[1;31m Database credentials failed..Not able to login. \e[0m"
+        echo -e "\e[1;31mDatabase credentials failed..Not able to login. \e[0m"
             exit 1
     fi
 else
@@ -282,12 +282,14 @@ echo "=========================================================="
 echo "$(tput setaf 7)$(tput setab 6)---|-WP READY TO ROCK-|---$(tput sgr 0)"
 read -e -p "Do you want to implement SSL with the site [y/n]: " -i "y" yn
 if [[ yn == 'y' ]]; then
+    echo "Let me check your server configuraiton.."
+    progress
     if [ $webroot == "httpd" ]; then
         echo "You are running apache: "
-        sudo sh extras_for_httpd.sh
+        sh extras_for_httpd.sh
     elif [ $webroot == "httpd" ]; then
         echo "You are running Nginx: "
-        sudo sh extras_for_nginx.sh
+        sh extras_for_nginx.sh
     else
         echo "Thank you.."
 fi
