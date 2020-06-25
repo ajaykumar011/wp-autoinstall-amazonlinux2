@@ -292,4 +292,5 @@ if [[ yn == 'y' ]]; then
         sh extras_for_nginx.sh
     else
         echo "Thank you.."
+    fi
 fi
