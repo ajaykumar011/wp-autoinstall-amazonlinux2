@@ -281,13 +281,15 @@ echo -e "\e[1;32m Great Work.. \e[0m"
 echo "=========================================================="
 echo "$(tput setaf 7)$(tput setab 6)---|-WP READY TO ROCK-|---$(tput sgr 0)"
 read -e -p "Do you want to implement SSL with the site [y/n]: " -i "y" yn
+read -e -p "Do you want to implement SSL with the site [y/n]: " -i "y" yn
 if [[ yn == 'y' ]]; then
     echo "Let me check your server configuraiton.."
     progress
     if [ $webroot == "httpd" ]; then
         echo "You are running apache: "
-        sh extras_for_httpd.sh
+        echo "you can run the script [sh extras_for_httpd.sh] after exiting this program"
     else 
         echo "You are running Nginx: "
-        sh extras_for_nginx.sh
-fi    
+        echo "you can run the script [sh extras_for_nginx.sh] after exiting this program"
+    fi
+fi

@@ -6,8 +6,9 @@ if [[ yn == 'y' ]]; then
     progress
     if [ $webroot == "httpd" ]; then
         echo "You are running apache: "
-        sh extras_for_httpd.sh
+        echo "you can run the script [sh extras_for_httpd.sh] after exiting this program"
     else 
         echo "You are running Nginx: "
-        sh extras_for_nginx.sh
-fi    
+        echo "you can run the script [sh extras_for_nginx.sh] after exiting this program"
+    fi
+fi
