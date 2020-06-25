@@ -10,6 +10,4 @@ if [[ yn == 'y' ]]; then
     else 
         echo "You are running Nginx: "
         sh extras_for_nginx.sh
-else
-    echo "Thank you.. Good bye.."
 fi    
