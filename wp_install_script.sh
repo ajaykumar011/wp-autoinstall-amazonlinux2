@@ -306,6 +306,8 @@ chmod -R 644 $webroot/.htaccess
 echo " "
 echo "We are implementing the permission webroot folder: $webroot"
 progress
+echo webroot value is : $webroot
+sleep 10
 webroot_dir=$(dirname $webroot)
 
 sudo chown -R $webroot_user:$webroot_group $webroot_dir
