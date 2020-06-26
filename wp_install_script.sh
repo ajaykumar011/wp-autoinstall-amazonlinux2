@@ -248,7 +248,47 @@ fi
 sleep 1
 
 echo "<?php phpinfo();?>" > $webroot/info.php
+if [[ -f '/etc/httpd/conf.d/vhost_ssl.conf' ]]; then
+    \mv /etc/httpd/conf.d/vhosts_ssl.conf /etc/httpd/conf.d/vhost_$now.bk && echo "vhosts_ssl.conf renamed " || echo "vhost.conf Rename failed"
+fi
+if [[ -f '/etc/httpd/conf.d/vhost.conf' ]]; then
+    \mv /etc/httpd/conf.d/vhosts.conf /etc/httpd/conf.d/vhost_$now.bk && echo "vhosts.conf renamed " || echo "vhost Rename failed"
+fi
+if [[ -f '/etc/httpd/conf.d/ssl.conf' ]]; then
+    \mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl_$now.bk && echo "ssl.conf renamed " || echo "ssl.conf Rename failed"
+fi
+progress
+
+\cp vhosts.conf /etc/httpd/conf.d/ && echo "vhosts.conf copied " || echo "vhosts.conf copy failed"
+echo " "
+
+echo "Confiiguring your non-ssl Vhost file which is to be copied to conf.d"
+infile_domain_name=$(cat vhosts.conf | grep 'ServerName' |  awk '{print $2}' | head -1)
+echo "Current domain name in the file is : $infile_domain_name"
+echo 
+read -e -p "Enter your domain to create custom vhosts.conf : " -i "cloudzone.today" new_domain_name
+
+if [[ new_domain_name != infile_domain_name ]]; then
+     sed -i -e "s/$infile_domain_name/$new_domain_name/g" vhosts.conf
+    if [ $? -eq 0 ]; then
+        echo "Vhost.conf if now ready for new domain: $new_domain_name."
+    else
+        echo "Some Problem occured in making vhosts file"
+        exit 1
+    fi
+fi
+
+echo "creating .htacces file for you.. Please wait"
+progress
+echo "copying .htaccess file to the web-directory"
+\mv $webroot_dir/.htacces $webroot_dir/.htacces_last_conf
+\cp .htaccess $webroot/
+sed "s/yoursite.com/$new_domain_name/g" $webroot/.htaccess
+chown $webroot_user:$webroot_group $webroot/.htaccess
+chmod 644 $webroot/.htaccess
+
 echo "We are implementing the permission webroot folder: $webroot"
+progress
 webroot_dir=$(dirname $webroot)
 
 sudo chown -R $webroot_user:$webroot_group $webroot_dir
@@ -260,26 +300,25 @@ if [ $? -eq 0 ]; then
 else
     echo "Permisson could not set.. Skipping"
 fi
-sleep 1
-clear
+
+wp_ver="$(grep wp_version wp-includes/version.php | awk -F "'" '{print $2}')"
 if [ $? -eq 0 ]; then
     echo "Wordpress DB configuration done successfully."
 else
     echo "Wordpress DB configuration failed"
 fi
-wp_ver="$(grep wp_version wp-includes/version.php | awk -F "'" '{print $2}')"
 echo "Your WP Version is $wp_ver"
 
 rm latest.tar.gz
 echo "******************************************************"
-grep -qi 'Wordpress' $webroot/index.php && echo "Wordpress installed" || echo "Some problem"
+grep -qi 'Wordpress' $webroot/index.php && echo "Wordpress installed" || echo "Some problem with the Installation"
 echo "******************************************************"
 echo "=========================================================="
 echo -e "\033[5mInstallation is finished\033[0m"
 echo -e "\e[1;32mGreat Work.. \e[0m"
 echo "=========================================================="
 echo "$(tput setaf 7)$(tput setab 6)---|-WP READY TO ROCK-|---$(tput sgr 0)"
-read -p "Do you want to implement SSL with the site [y/n]: " q
+read -p "Do you want to implement onw SSL with the site [y/n]: " q
 echo "value of yn is : $q"
 if [[ $q == "y" ]]; then
     echo "Let me check your server configuraiton.."
