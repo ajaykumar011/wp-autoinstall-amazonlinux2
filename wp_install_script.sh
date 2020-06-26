@@ -101,9 +101,7 @@ echo "-----------------------------------------------------------------"
 systemctl is-active --quiet php-fpm && echo "PHP is running" || echo "PHP is NOT running"
 php -v
 echo "-----------------------------------------------------------------"
-
-echo "-----------------------------------------------------------------"
-sleep 5
+progress
 echo " "
 echo "Database Version Information "
 mysql -V
@@ -141,8 +139,8 @@ if [[ create_db_yes_no != "y" ]]; then
     [ -z "$dbuser" ] && echo "Empty Input" 
     read -p "Enter your database password: " -s dbpass
     [ -z "$dbpass" ] && echo "Empty Input" 
-    
-    echo "------------------------------------------"
+    echo "  "
+    echo "  "
     echo "Here is the details of databse we got from your inputs. "
     echo "------------------------------------------"
     echo "DB Name: $dbname"
@@ -299,18 +297,19 @@ fi
 echo "creating .htacces file for you.. Please wait"
 progress
 echo "copying .htaccess file to the web-directory"
-\mv $webroot_dir/.htacces $webroot_dir/.htacces_last_conf
+\mv $webroot/.htacces $webroot/.htacces_last_conf
 \cp $script_dir/.htaccess $webroot/
-sed "s/yoursite.com/$new_domain_name/g" $webroot/.htaccess
-chown $webroot_user:$webroot_group $webroot/.htaccess
-chmod 644 $webroot/.htaccess
+sed -i "s/yoursite.com/$new_domain_name/g" $webroot/.htaccess
+chown -R $webroot_user:$webroot_group $webroot/.htaccess
+chmod -R 644 $webroot/.htaccess
 
+echo " "
 echo "We are implementing the permission webroot folder: $webroot"
 progress
 webroot_dir=$(dirname $webroot)
 
 sudo chown -R $webroot_user:$webroot_group $webroot_dir
-sudo chmod 2775 $webroot_dir
+sudo chmod -R 2775 $webroot_dir
 sudo find $webroot_dir -type d -exec chmod 2775 {} \;
 sudo find $webroot_dir -type f -exec chmod 0664 {} \;
 if [ $? -eq 0 ]; then
@@ -342,7 +341,7 @@ chown -R $webroot_user:root $access_log_file
 chown -R $webroot_user:root $error_log_file
 chmod -R 775 $access_log_file
 chmod -R 775 $error_log_file
-
+clear
 systemctl restart httpd && echo "Apache OK" || echo "Apache is not working. Some problem"
 systemctl restart httpd && echo "Nginx OK" || echo "Php-fpm is not working.. Some problme"
 
