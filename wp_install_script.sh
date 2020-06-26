@@ -3,15 +3,29 @@
 clear
 #a progress bar function.
 function progress(){
-    echo -ne '#####                     (25%)\r'
+    echo -ne '##########                     (25%)\r'
     sleep .5
-    echo -ne '#############             (50%)\r'
+    echo -ne '##################             (50%)\r'
     sleep .5
-    echo -ne '#######################   (75%)\r'
+    echo -ne '#################################   (75%)\r'
     sleep .5
-    echo -ne '###################################(100%)\r'
+    echo -ne '##################################################(100%)\r'
     echo -ne '\n'
 }
+function space(){                            
+        for ((i=0;i<=$1;i++)); do            
+                echo "  "                    
+        done                                 
+}                                            
+                                        
+function red(){                              
+echo -e "\e[1;31m$1\e[0m"                  
+}                                            
+                                             
+function green(){                            
+echo -e "\e[1;32m$1\e[0m"                    
+}                                            
+                                                                            
 #colour full text below.
 #echo  -e "\033[33;5;7mTitle of the Program\033[0m"
 #echo  -e "\033[5mTitle of the Program\033[0m"
@@ -131,6 +145,7 @@ echo "----------------------------------------------------"
 read -e -p "Hey! Do you want me to create a new database for you [y/n] :" -i "n" create_db_yes_no
 if [[ create_db_yes_no != "y" ]]; then
     echo "Okay, You seem to be with your own RDS database...."
+    echo "  "
     echo "Enter the database information to use with Wordpress"
     echo "----------------------------------------------------"
     read -p "Enter your database host or endpoint: " dbhost
@@ -284,6 +299,7 @@ echo "Confiiguring your non-ssl Vhost file which is to be copied to conf.d"
 infile_domain_name=$(cat $script_dir/vhosts.conf | grep 'ServerName' |  awk '{print $2}' | head -1)
 echo "Current domain name in the file is : $infile_domain_name"
 echo 
+space 3
 read -e -p "Enter your domain to create custom vhosts.conf : " -i "cloudzone.today" new_domain_name
 
 if [[ new_domain_name != infile_domain_name ]]; then
@@ -291,7 +307,7 @@ if [[ new_domain_name != infile_domain_name ]]; then
     if [ $? -eq 0 ]; then
         echo "Vhost.conf if now ready for new domain: $new_domain_name."
     else
-        echo "Some Problem occured in making vhosts file"
+        red "Some Problem occured in making vhosts file"
         exit 1
     fi
 fi
@@ -309,7 +325,7 @@ echo " "
 echo "We are implementing the permission webroot folder: $webroot"
 progress
 echo webroot value is : $webroot
-sleep 10
+sleep 3
 webroot_dir=$(dirname $webroot)
 
 sudo chown -R $webroot_user:$webroot_group $webroot_dir
@@ -317,16 +333,18 @@ sudo chmod -R 2775 $webroot_dir
 sudo find $webroot_dir -type d -exec chmod 2775 {} \;
 sudo find $webroot_dir -type f -exec chmod 0664 {} \;
 if [ $? -eq 0 ]; then
-    echo "Permission set successfully."
+    echo " "
+    green "Permission set successfully."
 else
-    echo "Permisson could not set.. Skipping"
+    echo " "
+    red "Permisson could not set.. Skipping"
 fi
 
 wp_ver="$(grep wp_version wp-includes/version.php | awk -F "'" '{print $2}')"
 if [ $? -eq 0 ]; then
-    echo "Wordpress DB configuration done successfully."
+    green "Wordpress DB configuration done successfully."
 else
-    echo "Wordpress DB configuration failed"
+    red "Wordpress DB configuration failed"
 fi
 echo "Your WP Version is $wp_ver"
 
@@ -334,8 +352,10 @@ rm latest.tar.gz
 echo "******************************************************"
 grep -qi 'Wordpress' $webroot/index.php && echo "Wordpress installed" || echo "Some problem with the Installation"
 echo "******************************************************"
+space 3
 echo -e "\033[5mInstallation is finished\033[0m"
 echo -e "\e[1;32mGreat Work.. \e[0m"
+space 3
 echo "=========================================================="
 echo "$(tput setaf 7)$(tput setab 6)---|-WP READY TO ROCK-|---$(tput sgr 0)"
 
@@ -346,8 +366,12 @@ chown -R $webroot_user:root $error_log_file
 chmod -R 775 $access_log_file
 chmod -R 775 $error_log_file
 clear
-systemctl restart httpd && echo "Apache OK" || echo "Apache is not working. Some problem"
-systemctl restart httpd && echo "Nginx OK" || echo "Php-fpm is not working.. Some problme"
+space 3
+progress
+systemctl restart httpd && green "Apache OK" || red "Apache is not working. Some problem"
+progress
+space 2
+systemctl restart httpd && green "Nginx OK" || red "Php-fpm is not working.. Some problme"
 
 
 read -p "Do you want to implement onw SSL with the site [y/n]: " q
