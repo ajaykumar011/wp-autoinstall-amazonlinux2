@@ -139,7 +139,7 @@ if [[ create_db_yes_no != "y" ]]; then
     echo " "
     echo "Thank you..Please wait checking your credentials..."
     progress
-    mysqladmin processlist -h $dbhost -P 3306 -u$dbuser -p$dbpass version | head -5
+    mysqladmin processlist -h$dbhost -P 3306 -u$dbuser -p$dbpass version | head -5
     if [ $? -eq 0 ]; then
         echo -e "\e[1;32mGood news. Database credentials are perfect... \e[0m"
     else
@@ -273,7 +273,7 @@ echo
 read -e -p "Enter your domain to create custom vhosts.conf : " -i "cloudzone.today" new_domain_name
 
 if [[ new_domain_name != infile_domain_name ]]; then
-     sed -i -e "s/$infile_domain_name/$new_domain_name/g" vhosts.conf
+     sed -i -e "s/$infile_domain_name/$new_domain_name/g" $script_dir/vhosts.conf
     if [ $? -eq 0 ]; then
         echo "Vhost.conf if now ready for new domain: $new_domain_name."
     else
