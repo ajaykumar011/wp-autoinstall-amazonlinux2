@@ -72,6 +72,7 @@ if [[ `ps -acx|grep httpd|wc -l` > 0 ]]; then
     grep 'ServerName' /etc/httpd/conf/httpd.conf | awk '{ print $2}' | cut -d ':' -f 1
     echo "Suggested Webroot is below: "
     grep 'DocumentRoot ' /etc/httpd/conf/httpd.conf | awk  '{print $2}'
+    clear
     read -e -p "Enter Your Webroot if not default :" -i "/var/www/html" webroot
     echo "Webroot Selected is: $webroot"
     sleep 3
@@ -96,12 +97,17 @@ fi
 #read -t 5 -n 1 -s -r -p "Press any key to continue"
 #command && echo "OK" || echo "NOK"
 echo "Let's check the PHP Status..."
+echo "-----------------------------------------------------------------"
 systemctl is-active --quiet php-fpm && echo "PHP is running" || echo "PHP is NOT running"
 php -v
+echo "-----------------------------------------------------------------"
+
+echo "-----------------------------------------------------------------"
 sleep 5
 echo " "
 echo "Database Version Information "
 mysql -V
+echo "-----------------------------------------------------------------"
 sleep 1
 echo "Going to Install some necessary tools"
 progress
@@ -141,7 +147,7 @@ if [[ create_db_yes_no != "y" ]]; then
     echo "------------------------------------------"
     echo "DB Name: $dbname"
     echo "DB User: $dbuser"
-    echo "DB Password: $dbpass"
+    echo "DB Password: ***********"
     echo "Host Name : $dbhost"
     echo "------------------------------------------"
     echo " "
@@ -330,6 +336,11 @@ echo -e "\033[5mInstallation is finished\033[0m"
 echo -e "\e[1;32mGreat Work.. \e[0m"
 echo "=========================================================="
 echo "$(tput setaf 7)$(tput setab 6)---|-WP READY TO ROCK-|---$(tput sgr 0)"
+
+systemctl restart httpd && echo "Apache OK" || echo "Apache is not working. Some problem"
+systemctl restart httpd && echo "Nginx OK" || echo "Php-fpm is not working.. Some problme"
+
+
 read -p "Do you want to implement onw SSL with the site [y/n]: " q
 echo "value of yn is : $q"
 if [[ $q == "y" ]]; then
