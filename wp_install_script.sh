@@ -147,7 +147,7 @@ if [[ create_db_yes_no != "y" ]]; then
     echo " "
     echo "Thank you..Please wait checking your credentials..."
     progress
-    mysqladmin processlist -h$dbhost -P 3306 -u$dbuser -p$dbpass version | head -5
+    mysqladmin processlist -h$dbhost -P 3306 -u$dbuser -p$dbpass
     if [ $? -eq 0 ]; then
         echo -e "\e[1;32mGood news. Database credentials are perfect... \e[0m"
     else
