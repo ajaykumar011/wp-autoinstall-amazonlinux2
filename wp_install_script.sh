@@ -135,7 +135,15 @@ if [[ create_db_yes_no != "y" ]]; then
     [ -z "$dbuser" ] && echo "Empty Input" 
     read -p "Enter your database password: " -s dbpass
     [ -z "$dbpass" ] && echo "Empty Input" 
-    echo " "
+    
+    echo "------------------------------------------"
+    echo "Here is the details of databse we got from your inputs. "
+    echo "------------------------------------------"
+    echo "DB Name: $dbname"
+    echo "DB User: $dbuser"
+    echo "DB Password: $dbpass"
+    echo "Host Name : $dbhost"
+    echo "------------------------------------------"
     echo " "
     echo "Thank you..Please wait checking your credentials..."
     progress
@@ -229,8 +237,8 @@ echo "Here is the details of databse we got from above. "
 echo "------------------------------------------"
 echo "DB Name: $dbname"
 echo "DB User: $dbuser"
-echo "DB Password : $dbpass"
-echo "Host Name : $dbhost"
+echo "DB Password: $dbpass"
+echo "Host Name: $dbhost"
 echo "------------------------------------------"
 echo " "
 echo "Entering the information in wp-config file.. please wait."
@@ -267,7 +275,7 @@ progress
 echo " "
 
 echo "Confiiguring your non-ssl Vhost file which is to be copied to conf.d"
-infile_domain_name=$(cat vhosts.conf | grep 'ServerName' |  awk '{print $2}' | head -1)
+infile_domain_name=$(cat $script_dir/vhosts.conf | grep 'ServerName' |  awk '{print $2}' | head -1)
 echo "Current domain name in the file is : $infile_domain_name"
 echo 
 read -e -p "Enter your domain to create custom vhosts.conf : " -i "cloudzone.today" new_domain_name
