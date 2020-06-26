@@ -331,11 +331,17 @@ rm latest.tar.gz
 echo "******************************************************"
 grep -qi 'Wordpress' $webroot/index.php && echo "Wordpress installed" || echo "Some problem with the Installation"
 echo "******************************************************"
-echo "=========================================================="
 echo -e "\033[5mInstallation is finished\033[0m"
 echo -e "\e[1;32mGreat Work.. \e[0m"
 echo "=========================================================="
 echo "$(tput setaf 7)$(tput setab 6)---|-WP READY TO ROCK-|---$(tput sgr 0)"
+
+access_log_file=$(cat /etc/httpd/conf.d/vhosts.conf | grep -i CustomLog | awk '{print $2}')
+error_log_file=$(cat /etc/httpd/conf.d/vhosts.conf | grep -i ErrorLog | awk '{print $2}')
+chown -R $webroot_user:root $access_log_file
+chown -R $webroot_user:root $error_log_file
+chmod -R 775 $access_log_file
+chmod -R 775 $error_log_file
 
 systemctl restart httpd && echo "Apache OK" || echo "Apache is not working. Some problem"
 systemctl restart httpd && echo "Nginx OK" || echo "Php-fpm is not working.. Some problme"
