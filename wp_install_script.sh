@@ -30,7 +30,11 @@ echo  -e "\033[33;5;7mWelcome to Automated installation of Wordpress\033[0m"
 echo "**********************************************"
 echo "Date and Time:" $(date +%F_%R)
 echo "Sever Uptime is:" && uptime
-sleep 3
+echo "Timezone adjustment to IST"
+sudo ln -sf /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
+date
+sleep 2
+clear
 echo "----------------------------------------------"
 echo "Amazon Linux Information section"
 echo "----------------------------------------------"
@@ -66,7 +70,7 @@ if [[ `ps -acx|grep httpd|wc -l` > 0 ]]; then
     echo "Suggested Server Name:"
     grep 'ServerName' /etc/httpd/conf/httpd.conf | awk '{ print $2}' | cut -d ':' -f 1
     echo "Suggested Webroot is below: "
-    grep 'DocumentRoot ' /etc/httpd/conf/httpd.conf | awk  '{print $1}'
+    grep 'DocumentRoot ' /etc/httpd/conf/httpd.conf | awk  '{print $2}'
     read -e -p "Enter Your Webroot if not default :" -i "/var/www/html" webroot
     echo "Webroot Selected is: $webroot"
     sleep 3
@@ -135,7 +139,6 @@ if [[ create_db_yes_no != "y" ]]; then
     echo "Thank you..Please wait checking your credentials..."
     progress
     mysqladmin processlist -h $dbhost -P 3306 -u$dbuser -p$dbpass version | head -5
-    echo "Value in db passwd:$dbpass"
     if [ $? -eq 0 ]; then
         echo -e "\e[1;32mGood news. Database credentials are perfect... \e[0m"
     else
