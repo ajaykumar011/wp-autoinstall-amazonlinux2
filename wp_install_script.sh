@@ -70,7 +70,7 @@ echo " "
 echo "----------------------------------------------"
 
 if [ $? -eq 0 ]; then
-    echo -e "\e[1;32m Great Let's Begin. \e[0m"
+    echo -e "\e[1;32mGreat Let's Begin. \e[0m"
 else
     echo "Not found [Amazon Linux OS]"
     exit 1
@@ -354,21 +354,20 @@ rm latest.tar.gz
 echo "******************************************************"
 grep -qi 'Wordpress' $webroot/index.php && echo "Wordpress files are copied to webfolder" || echo "Some problem with the Installation"
 echo "******************************************************"
-space 3
+space 1
 echo -e "\033[5mInstallation is finished but not confirmed the site is accessible..\033[0m"
 echo -e "\e[1;32mGreat Work.. \e[0m"
-space 3
 echo "=========================================================="
 echo "$(tput setaf 7)$(tput setab 6)---|-WP READY TO ROCK-|---$(tput sgr 0)"
 
 access_log_file=$(cat /etc/httpd/conf.d/vhosts.conf | grep -i CustomLog | awk '{print $2}')
 error_log_file=$(cat /etc/httpd/conf.d/vhosts.conf | grep -i ErrorLog | awk '{print $2}')
-chown -R $webroot_user:root $access_log_file
-chown -R $webroot_user:root $error_log_file
-chmod -R 775 $access_log_file
-chmod -R 775 $error_log_file
+log_dir=$(dirname $access_log_file)
 
-space 3
+chown -R $webroot_user:root $log_dir
+chmod -R 775 $log_dir
+
+space 2
 progress
 systemctl restart httpd && green "Apache OK" || red "Apache is not working. Some problem"
 progress
