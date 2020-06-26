@@ -297,7 +297,7 @@ fi
 echo "creating .htacces file for you.. Please wait"
 progress
 echo "copying .htaccess file to the web-directory"
-\mv $webroot/.htacces $webroot/.htacces_last_conf
+\mv $webroot/.htaccess $webroot/.htacces_last_conf
 \cp $script_dir/.htaccess $webroot/
 sed -i "s/yoursite.com/$new_domain_name/g" $webroot/.htaccess
 chown -R $webroot_user:$webroot_group $webroot/.htaccess
