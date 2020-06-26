@@ -19,8 +19,10 @@ function progress(){
 #echo -e "\e[1;32m This is green text \e[0m"
 
 # set your variables here
-webroot_user=apache #for permission
-webroot_group=apache
+readonly webroot_user=apache #for permission
+readonly webroot_group=apache
+readonly webroot=/var/www/html
+
 script_dir=$(pwd)
 if [ $USER != "root" ]; then
         echo "Script must be run as user sudo or root "
@@ -73,7 +75,7 @@ if [[ `ps -acx|grep httpd|wc -l` > 0 ]]; then
     echo "Suggested Webroot is below: "
     grep 'DocumentRoot ' /etc/httpd/conf/httpd.conf | awk  '{print $2}'
     clear
-    read -e -p "Enter Your Webroot if not default :" -i "/var/www/html" webroot
+    #read -e -p "Enter Your Webroot if not default :" -i "/var/www/html" webroot
     echo "Webroot Selected is: $webroot"
     sleep 3
     web_service=httpd
