@@ -371,19 +371,20 @@ space 2
 progress
 systemctl restart httpd && green "Apache OK" || red "Apache is not working. Some problem"
 progress
-space 2
-systemctl restart httpd && green "Nginx OK" || red "Php-fpm is not working.. Some problme"
-space 3
+systemctl restart httpd && green "PHP OK" || red "Php-fpm is not working.. Some problme"
+progress
 curl -I www.$new_domain_name | grep -E '301|200'
 if [ $? -eq 0 ]; then
-green "******************************************************************************"
-echo  -e "\e[42mWORDPRESS IS INSTALLED AND SITE IS READY TO USE. GREAT WORK.. \033[0m"
-green "******************************************************************************"
-space 3
+    green "******************************************************************************"
+    echo  -e "\e[42mWORDPRESS IS INSTALLED AND SITE IS READY TO USE. GREAT WORK.. \033[0m"
+    green "******************************************************************************"
+    space 3
+else 
+    echo  -e "\e[41mThere are still some problem with the Site.. Try browsing\033[0m"
 fi
+
 curl -I www.$new_domain_name 
 curl -I $new_domain_name 
-
 space 3
 
 read -p "Do you want to implement onw SSL with the site [y/n]: " q
