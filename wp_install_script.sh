@@ -21,6 +21,7 @@ function progress(){
 # set your variables here
 webroot_user=apache #for permission
 webroot_group=apache
+script_dir=$(pwd)
 if [ $USER != "root" ]; then
         echo "Script must be run as user sudo or root "
         exit 1
@@ -251,7 +252,7 @@ fi
 sleep 1
 
 echo "<?php phpinfo();?>" > $webroot/info.php
-if [[ -f '/etc/httpd/conf.d/vhost_ssl.conf' ]]; then
+if [[ -f '/etc/httpd/conf.d/vhosts_ssl.conf' ]]; then
     \mv /etc/httpd/conf.d/vhosts_ssl.conf /etc/httpd/conf.d/vhost_$now.bk && echo "vhosts_ssl.conf renamed " || echo "vhost.conf Rename failed"
 fi
 if [[ -f '/etc/httpd/conf.d/vhost.conf' ]]; then
@@ -262,7 +263,7 @@ if [[ -f '/etc/httpd/conf.d/ssl.conf' ]]; then
 fi
 progress
 
-\cp vhosts.conf /etc/httpd/conf.d/ && echo "vhosts.conf copied " || echo "vhosts.conf copy failed"
+\cp $script_dir/vhosts.conf /etc/httpd/conf.d/ && echo "vhosts.conf copied " || echo "vhosts.conf copy failed"
 echo " "
 
 echo "Confiiguring your non-ssl Vhost file which is to be copied to conf.d"
@@ -285,7 +286,7 @@ echo "creating .htacces file for you.. Please wait"
 progress
 echo "copying .htaccess file to the web-directory"
 \mv $webroot_dir/.htacces $webroot_dir/.htacces_last_conf
-\cp .htaccess $webroot/
+\cp $script_dir/.htaccess $webroot/
 sed "s/yoursite.com/$new_domain_name/g" $webroot/.htaccess
 chown $webroot_user:$webroot_group $webroot/.htaccess
 chmod 644 $webroot/.htaccess
