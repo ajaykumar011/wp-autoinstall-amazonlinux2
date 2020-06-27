@@ -408,5 +408,5 @@ if [[ $q == "y" ]]; then
 else
     echo "Thank you and enjoy browsing the site"
     echo "If you see 200 OK it means your site is working fine"
-    curl -I localhost
+    echo "Command is : curl -I localhost"
 fi

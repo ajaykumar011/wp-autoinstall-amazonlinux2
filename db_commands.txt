@@ -1,0 +1,154 @@
+
+mysqql status and mysql extended status
+variables
+mysql process list- show processlist;
+mysql -uroot -p -be "show processlist;" | awk '{print $2,$4,$5,$3 }' |awk -F ":" '{print $1}'|sort |uniq -c ; done 
+
+// Running Process
+SELECT * 
+FROM INFORMATION_SCHEMA.PROCESSLIST 
+WHERE COMMAND != 'Sleep';
+
+// Shows all queries running for 5 seconds or more:
+
+SELECT * FROM INFORMATION_SCHEMA.PROCESSLIST WHERE COMMAND != 'Sleep' AND TIME >= 5;
+
+
+
+mysqladmin -u root -p kill 5 (killing proces list)
+mysql -uroot -p -be"status"|egrep "Uptime" (uptime status)
+
+MySQL Privileges - Reload and refresh 
+(The reload command tells the server to reload the grant tables. The refresh command flushes all tables and reopens the log files.)
+
+Get the database list
+describe the table using describe statement.
+Get the tables list of any use database
+
+show columns from [table name];
+get the version of db
+get the time zone
+get the ssl connection confirmation
+get engine name
+get parameters values etc (any one)
+get the user information like its name, grant options etc.
+create a new user like masteradmin
+
+Ssl_accepts
+ Ssl_finished_accepts
+ Ssl_version
+
+------------------
+
+
+Adding user and granting permission.
+CREATE USER 'finley'@'localhost' IDENTIFIED BY 'some_pass'; 
+
+CREATE USER 'finley'@'%' IDENTIFIED BY 'some_pass';
+Granting Privileges.
+GRANT USAGE ON *.* TO 'bia_readonly'@'%' IDENTIFIED BY 'XXXXXXX';
+
+GRANT ALL PRIVILEGES ON *.* TO 'finley'@'localhost' WITH GRANT OPTION;
+
+GRANT ALL PRIVILEGES ON `database`.* TO 'user'@'%';
+// Read_only privileges:
+
+GRANT SELECT ON database.* TO 'user'@'%' IDENTIFIED BY 'password';
+
+// Read/write privileges:
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE TEMPORARY TABLES ON database.tables TO 'user'@'%' IDENTIFIED BY 'password';
+
+-------------------
+
+use mysql ;
+
+SET PASSWORD FOR 'jeffrey'@'localhost' = PASSWORD('mypass');
+
+For Mysql Version 5.7
+---------------------
+
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'MyNewPass4!';
+
+SHOW GRANTS FOR 'admin'@'localhost';
+REVOKE [type of permission] ON [database name].[table name] FROM ‘[username]’@‘localhost’;
+DROP USER 'rupesh'@'%'
+
+=================================================================
+Connection Query
+show global status like 'Threads_connected' ;                           // To check how many threads connected to DB right now.
+
+SHOW VARIABLES LIKE '%connections%'                                   // Gives the max No. of connections set for the client application(max_connections)
+
+show variables like 'max_connections';                                 //  total max connections the DB is able to accept.
+
+show variables like 'max_user_connections' ;                           // Gives the max_used_connections by the client application till date.
+
+show variables like 'max_connect_errors';                             // to check user connection error.
+
+set global max_connections = 500;                                   // incresing max_connect globally as per requirement.
+
+SHOW GLOBAL STATUS LIKE'%thread%'                                      Threads_cached     ---- Gives the total thread cached by the application currently
+                                                                       Threads_connected  ---- Gives the total no of connections used by the application including sleep connections.
+                                                                       Threads_created    ---- Gives the total threads created by application till date.
+	                                                               Threads_running    ---- No. of useful Threads for query execution.
+mysql -uroot -p  -be "show global status like 'Th
+
+
+
+
+mysql -uroot -p  -be "show global status like 'Threads_connected' ;show variables like 'max_connections';show variables like 'max_user_connections' ;show variables like 'max_connect_errors';" --skip-column-names --silent ; 
+
+========================
+
+SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'database' AND ENGINE = 'MyISAM'; 
+
+SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'database' AND ENGINE = 'MyISAM'; 
+
+SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = 'database' AND ENGINE = 'memory';
+==============================
+
+
+Syntax for MySQL dump of database.
+//Simple dump of database and table 
+mysqldump -u<user> -p <database> <table> > dumpfile.sql
+
+//Full Database dump 
+mysqldump -h<hostname> -u<user> -p  --single-transaction  --routines --triggers  --all-databases  >  fulldump.sql
+
+// --no-create-info: Taking <user> without Create Table info and only Content of tables.(Do not write CREATE TABLE statements that re-create each <user>ed table)
+
+mysqldump -h<hostname> -u<user> -p --single-transaction --no-create-info --databases test > /var/lib/mysql/dumpfile_3306.sql 2>> /var/lib/mysql/dumpfile_3306.log 
+
+//  --no-data: Taking <user> with out Data and only Table Structure of a Schema .(Do not <user> table contents)
+
+mysqldump -h<hostname> -u<user> -p --single-transaction --no-data --databases test > /var/lib/mysql/dumpfile_3306.sql 2>> /var/lib/mysql/dumpfile_3306.log
+ 
+//  --master-data: Write the binary log file name and position to the output
+
+mysqldump -h<hostname> -u<user> -p  -P3306  --single-transaction --routines --triggers --master-data=2  --databases <db1> <db2>  > dumpfile_3306.sql 2>> dumpfile_3306.log
+
+Dump routines and triggers only (prompting for password):
+
+mysqldump -h<hostname> -u<user> -p --routines --triggers --no-create-info --no-data --no-create-db --skip-opt --databases ddb > outputfile.sql
+
+Dump routines only:
+
+ mysqldump -h<hostname> -u<user> -p --routines --skip_triggers --no-create-info --no-data --no-create-db --skip-opt --databases ddb > outputfile.sql
+
+Ignore few tables in database
+
+mysqldump -u root -p db_name --ignore-table=db_name.table_name > dump_db.sql
+
+Dump data in tab format 
+
+mysqldump -u root -p --tab=/var/lib/mysql-files/ db_name table_name > data.txt
+
+
+
+*******************************************************
+
+grant all privileges on *.* to 'superuser'@'%' with grant option;
+
+
+

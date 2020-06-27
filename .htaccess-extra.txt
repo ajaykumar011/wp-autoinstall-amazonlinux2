@@ -1,0 +1,31 @@
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^yoursite.com 
+RewriteRule (.*) https://www.yoursite.com/$1 [R=301,L]
+
+#Comment top 3 lines if you're using ALB and Bitnami WP or Simple WP behind ELB.
+#Uncomment below lines Let apache know we're behind a SSL reverse proxy like AWS ALB (this is important)
+SetEnvIf X-Forwarded-Proto "https" HTTPS=on
+
+<IfModule mod_setenvif.c>
+    SetEnvIf X-Forwarded-Proto "^https$" HTTPS
+  </IfModule>
+
+<IfModule mod_rewrite.c>    #This for http to https redirection
+  RewriteEngine on
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IFModule>
+
+Redirection for Http to https 
+#https://docs.bitnami.com/aws/how-to/configure-elb-ssl-aws/
+<VirtualHost *:80>
+#    ...
+    RewriteEngine On
+    RewriteCond %{HTTP:X-Forwarded-Proto} !https
+    RewriteRule ^.*$ https://%{SERVER_NAME}%{REQUEST_URI}
+#   ...
+#you would also require to add configuration in wordpres wp-config.php
+
+if (strpos($_SERVER['HTTP_X_FORWARDED_PROTO'], 'https') !== false)
+    $_SERVER['HTTPS']='on';
